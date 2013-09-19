@@ -26,11 +26,12 @@
  * @package themepackagercomponent
  * @subpackage controllers
  */
-$modx->regClientStartupScript($tp->config['jsUrl'].'themepackagercomponent.js');
+$modx = $this->modx;
+$modx->regClientStartupScript($this->config['jsUrl'].'themepackagercomponent.js');
 $modx->regClientStartupHTMLBlock('<script type="text/javascript">
 Ext.onReady(function() {
-    TP.config = '.$modx->toJSON($tp->config).';
-    TP.config.connector_url = "'.$tp->config['connectorUrl'].'";
+    TP.config = '.$modx->toJSON($this->config).';
+    TP.config.connector_url = "'.$this->config['connectorUrl'].'";
     TP.request = '.$modx->toJSON($_GET).';
 });
 </script>');

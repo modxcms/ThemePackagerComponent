@@ -26,14 +26,15 @@
  * @package themepackagercomponent
  * @subpackage controllers
  */
-$modx->regClientStartupScript($tp->config['jsUrl'].'templates.grid.js');
-$modx->regClientStartupScript($tp->config['jsUrl'].'chunks.grid.js');
-$modx->regClientStartupScript($tp->config['jsUrl'].'snippets.grid.js');
-$modx->regClientStartupScript($tp->config['jsUrl'].'plugins.grid.js');
-$modx->regClientStartupScript($tp->config['jsUrl'].'packages.grid.js');
-$modx->regClientStartupScript($tp->config['jsUrl'].'directories.grid.js');
-$modx->regClientStartupScript($tp->config['jsUrl'].'home.panel.js');
-$modx->regClientStartupScript($tp->config['jsUrl'].'home.js');
+$modx = $this->modx;
+$modx->regClientStartupScript($this->config['jsUrl'].'templates.grid.js');
+$modx->regClientStartupScript($this->config['jsUrl'].'chunks.grid.js');
+$modx->regClientStartupScript($this->config['jsUrl'].'snippets.grid.js');
+$modx->regClientStartupScript($this->config['jsUrl'].'plugins.grid.js');
+$modx->regClientStartupScript($this->config['jsUrl'].'packages.grid.js');
+$modx->regClientStartupScript($this->config['jsUrl'].'directories.grid.js');
+$modx->regClientStartupScript($this->config['jsUrl'].'home.panel.js');
+$modx->regClientStartupScript($this->config['jsUrl'].'home.js');
 $output = '<div id="tp-panel-home-div"></div>';
 
 return $output;
