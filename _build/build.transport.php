@@ -1,31 +1,31 @@
 <?php
 /**
- * PackMan
+ * ThemePackagerComponent
  *
- * Copyright 2010 by Shaun McCormick <shaun@modxcms.com>
+ * Copyright 2013 by Mike Schell <mike@modx.com> for MODX, LLC
  *
- * This file is part of PackMan.
+ * This file is part of ThemePackagerComponent.
  *
- * PackMan is free software; you can redistribute it and/or modify it
+ * ThemePackagerComponent is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any
  * later version.
  *
- * PackMan is distributed in the hope that it will be useful, but
+ * ThemePackagerComponent is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
  * You should have received a copy of the GNU General Public License along with
- * PackMan; if not, write to the Free Software Foundation, Inc., 59
+ * ThemePackagerComponent; if not, write to the Free Software Foundation, Inc., 59
  * Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @package packman
+ * @package themepackagercomponent
  */
 /**
- * PackMan build script
+ * ThemePackagerComponent build script
  *
- * @package packman
+ * @package themepackagercomponent
  * @subpackage build
  */
 $mtime = microtime();
@@ -35,8 +35,8 @@ $tstart = $mtime;
 set_time_limit(0);
 
 /* version info */
-define('PKG_NAME','packman');
-define('PKG_NAME_LOWER','packman');
+define('PKG_NAME','themepackagercomponent');
+define('PKG_NAME_LOWER','themepackagercomponent');
 define('PKG_VERSION','1.2.0');
 define('PKG_RELEASE','pl');
 
@@ -47,10 +47,10 @@ $sources= array (
     'build' => $root .'_build/',
     'resolvers' => $root . '_build/resolvers/',
     'data' => $root . '_build/data/',
-    'lexicon' => $root . 'core/components/packman/lexicon/',
-    'source_core' => $root.'core/components/packman',
-    'source_assets' => $root.'assets/components/packman',
-    'docs' => $root.'core/components/packman/docs/',
+    'lexicon' => $root . 'core/components/themepackagercomponent/lexicon/',
+    'source_core' => $root.'core/components/themepackagercomponent',
+    'source_assets' => $root.'assets/components/themepackagercomponent',
+    'docs' => $root.'core/components/themepackagercomponent/docs/',
 );
 unset($root);
 

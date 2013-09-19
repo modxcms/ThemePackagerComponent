@@ -23,33 +23,21 @@
  * @package themepackagercomponent
  */
 /**
- * Adds modActions and modMenus into package
+ * ThemePackagerComponent Connector
  *
  * @package themepackagercomponent
- * @subpackage build
  */
-$action= $modx->newObject('modAction');
-$action->fromArray(array(
-    'id' => 1,
-    'namespace' => PKG_NAME_LOWER,
-    'parent' => 0,
-    'controller' => 'index',
-    'haslayout' => true,
-    'lang_topics' => PKG_NAME_LOWER.':default,lexicon',
-    'assets' => '',
-),'',true,true);
+require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
+require_once MODX_CORE_PATH.'config/'.MODX_CONFIG_KEY.'.inc.php';
+require_once MODX_CONNECTORS_PATH.'index.php';
 
-/* load action into menu */
-$menu= $modx->newObject('modMenu');
-$menu->fromArray(array(
-    'text' => PKG_NAME_LOWER,
-    'parent' => 'components',
-    'description' => PKG_NAME_LOWER.'.menu_desc',
-    'icon' => 'images/icons/plugin.gif',
-    'menuindex' => 0,
-    'params' => '',
-    'handler' => '',
-),'',true,true);
-$menu->addOne($action);
+$basePath = $modx->getOption('themepackagercomponent.core_path',null,$modx->getOption('core_path').'components/themepackagercomponent/');
+require_once $basePath.'model/themepackagercomponent/themepackagercomponent.class.php';
+$modx->tp = new ThemePackagerComponent($modx);
 
-return $menu;
+/* handle request */
+$path = $modx->getOption('processorsPath',$modx->tp->config,$modx->getOption('core_path').'components/tp/processors/');
+$modx->request->handleRequest(array(
+    'processors_path' => $path,
+    'location' => '',
+));
