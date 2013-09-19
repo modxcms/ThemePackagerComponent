@@ -4,7 +4,9 @@
  */
 $xpdo_meta_map['tpcProfile']= array (
   'package' => 'themepackagercomponent',
+  'version' => NULL,
   'table' => 'tpc_profile',
+  'extends' => 'xPDOSimpleObject',
   'fields' => 
   array (
     'name' => '',
