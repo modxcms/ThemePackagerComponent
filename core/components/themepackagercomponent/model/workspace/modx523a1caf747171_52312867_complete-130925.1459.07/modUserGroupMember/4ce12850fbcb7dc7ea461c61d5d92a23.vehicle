@@ -1,0 +1,27 @@
+<?php return array (
+  'guid' => '8b19f5f041e91692a2eec0a79b01c4eb',
+  'object' => 
+  array (
+    0 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modUserGroupMember',
+      'object' => '{"id":1,"user_group":1,"member":1,"role":2,"rank":0}',
+      'guid' => 'd039ad239b0f529d8e5a27e5c08ae2a3',
+      'native_key' => 1,
+      'signature' => '4be0d22c07b30167dee8590dfda04dd4',
+    ),
+  ),
+  'package' => 'modx',
+  'class' => 'modUserGroupMember',
+  'preserve_keys' => true,
+  'update_object' => true,
+  'vehicle_package' => '',
+  'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+  'signature' => '4ce12850fbcb7dc7ea461c61d5d92a23',
+  'native_key' => '8b19f5f041e91692a2eec0a79b01c4eb',
+);

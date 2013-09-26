@@ -1,0 +1,53 @@
+<?php return array (
+  'guid' => '908a09f15286e4d57133afdd1de5e372',
+  'object' => 
+  array (
+    0 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modLexiconEntry',
+      'object' => '{"id":1,"name":"setting_themepackagercomponent.core_path","value":"core path ","topic":"default","namespace":"core","language":"en","createdon":"2013-09-19 15:17:08","editedon":"0000-00-00 00:00:00"}',
+      'guid' => '25ab4aa6bbd55fd2cb4b3f802e24263b',
+      'native_key' => 1,
+      'signature' => 'af65185efb7171b585632cbc5293c0c1',
+    ),
+    1 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modLexiconEntry',
+      'object' => '{"id":2,"name":"setting_themepackagercomponent.core_path","value":"core path ","topic":"default","namespace":"themepackagercomponent","language":"en","createdon":"2013-09-19 15:17:26","editedon":"0000-00-00 00:00:00"}',
+      'guid' => '5241a4b49feb6e478b89a3da0b3c4aef',
+      'native_key' => 2,
+      'signature' => '0f722412b08c8b2ead62d76bba414a0d',
+    ),
+    2 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modLexiconEntry',
+      'object' => '{"id":3,"name":"setting_themepackagercomponent.assets_url","value":"assets url","topic":"default","namespace":"themepackagercomponent","language":"en","createdon":"2013-09-19 15:18:45","editedon":"0000-00-00 00:00:00"}',
+      'guid' => '457fbffc9dabd42a9186ffbf8905bb49',
+      'native_key' => 3,
+      'signature' => '6af58443c709eab6e31f8e4e74d9b976',
+    ),
+  ),
+  'package' => 'modx',
+  'class' => 'modLexiconEntry',
+  'preserve_keys' => true,
+  'update_object' => true,
+  'vehicle_package' => '',
+  'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+  'signature' => '4be15b972bfa49d0666e4fac8c4f6733',
+  'native_key' => '908a09f15286e4d57133afdd1de5e372',
+);

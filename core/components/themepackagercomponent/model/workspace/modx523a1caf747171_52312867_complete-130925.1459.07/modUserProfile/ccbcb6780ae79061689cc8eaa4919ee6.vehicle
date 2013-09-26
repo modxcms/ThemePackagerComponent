@@ -1,0 +1,27 @@
+<?php return array (
+  'guid' => '40c376e7fad6f31afa70e1233348b7f1',
+  'object' => 
+  array (
+    0 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modUserProfile',
+      'object' => '{"id":1,"internalKey":1,"fullname":"Default Admin User","email":"mike@modx.com","phone":"","mobilephone":"","blocked":0,"blockeduntil":0,"blockedafter":0,"logincount":10,"lastlogin":1380031565,"thislogin":1380035758,"failedlogincount":0,"sessionid":"ttmetj4o6ahpu1fnjhs27ae6r7","dob":0,"gender":0,"address":"","country":"","city":"","state":"","zip":"","fax":"","photo":"","comment":"","website":"","extended":null}',
+      'guid' => '72d05cc1c5ba907d20f7b1e70addb0a1',
+      'native_key' => 1,
+      'signature' => 'da8acfb2c0ae3ce17a92568f20d99904',
+    ),
+  ),
+  'package' => 'modx',
+  'class' => 'modUserProfile',
+  'preserve_keys' => true,
+  'update_object' => true,
+  'vehicle_package' => '',
+  'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+  'signature' => 'ccbcb6780ae79061689cc8eaa4919ee6',
+  'native_key' => '40c376e7fad6f31afa70e1233348b7f1',
+);

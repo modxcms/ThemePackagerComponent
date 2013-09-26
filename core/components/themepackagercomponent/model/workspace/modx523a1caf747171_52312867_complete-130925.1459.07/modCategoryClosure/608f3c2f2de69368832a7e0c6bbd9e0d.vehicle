@@ -1,0 +1,48 @@
+<?php return array (
+  'guid' => 'dacf5e47e199f50ad979eb1c190834ee',
+  'object' => 
+  array (
+    0 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modCategoryClosure',
+      'object' => '{"ancestor":1,"descendant":1,"depth":0}',
+      'guid' => '3108104f1ecdc20f3fbce4c46727d5b7',
+      'native_key' => 
+      array (
+        0 => 1,
+        1 => 1,
+      ),
+      'signature' => '8fc110c5bf9ca9e032f824263ad96d05',
+    ),
+    1 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modCategoryClosure',
+      'object' => '{"ancestor":0,"descendant":1,"depth":0}',
+      'guid' => 'a19f8b30d88637895a9b3b50428934b0',
+      'native_key' => 
+      array (
+        0 => 0,
+        1 => 1,
+      ),
+      'signature' => 'acb4d981dfb285157cd3ea05bce65088',
+    ),
+  ),
+  'package' => 'modx',
+  'class' => 'modCategoryClosure',
+  'preserve_keys' => true,
+  'update_object' => true,
+  'vehicle_package' => '',
+  'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+  'signature' => '608f3c2f2de69368832a7e0c6bbd9e0d',
+  'native_key' => 'dacf5e47e199f50ad979eb1c190834ee',
+);

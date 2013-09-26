@@ -1,0 +1,40 @@
+<?php return array (
+  'guid' => '251fa3861a262f516c09938043e6d6e0',
+  'object' => 
+  array (
+    0 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modTemplate',
+      'object' => '{"id":1,"source":0,"property_preprocess":0,"templatename":"BaseTemplate","description":"Template","editor_type":0,"category":0,"icon":"","template_type":0,"content":"<html>\\n<head>\\n<title>[[++site_name]] - [[*pagetitle]]<\\/title>\\n<base href=\\"[[++site_url]]\\" \\/>\\n<\\/head>\\n<body>\\n[[*content]]\\n<\\/body>\\n<\\/html>","locked":0,"properties":null,"static":0,"static_file":""}',
+      'guid' => 'b41b332be660796b0e114b47bf3b7186',
+      'native_key' => 1,
+      'signature' => 'c0acf8a6ef5ec8d716523240c3a20472',
+    ),
+    1 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modTemplate',
+      'object' => '{"id":2,"source":0,"property_preprocess":0,"templatename":"Landing","description":"Landing page .. original site","editor_type":0,"category":0,"icon":"","template_type":0,"content":"<html>\\n<head><\\/head>\\n<body>\\n<h1>Landing page template - original site<\\/h1>\\n[[*content]]\\n<\\/body>\\n<\\/html>","locked":0,"properties":"a:0:{}","static":0,"static_file":""}',
+      'guid' => 'c37e502e81e8bbcfa332c40a6c03cad8',
+      'native_key' => 2,
+      'signature' => '610528acf95bc35dbba733a279b82967',
+    ),
+  ),
+  'package' => 'modx',
+  'class' => 'modTemplate',
+  'preserve_keys' => true,
+  'update_object' => true,
+  'vehicle_package' => '',
+  'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+  'signature' => '6dd0060922ad74ecc2cbbfaafa282feb',
+  'native_key' => '251fa3861a262f516c09938043e6d6e0',
+);

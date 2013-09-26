@@ -18,7 +18,7 @@ class SiphonLoader {
 
 if (!function_exists('isCli')) {
     function isCli() {
-        return php_sapi_name() == 'cli' || (is_numeric($_SERVER['argc']) && $_SERVER['argc'] > 0);
+        return php_sapi_name() == 'cli' || (array_key_exists('argc', $_SERVER) && is_numeric($_SERVER['argc']) && $_SERVER['argc'] > 0);
     }
 }
 /* use spl_autoload without throwing exceptions */

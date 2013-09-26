@@ -1,0 +1,27 @@
+<?php return array (
+  'guid' => 'd33a48053d281ea06c2c9076af6055e7',
+  'object' => 
+  array (
+    0 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx.transport',
+      'class' => 'modTransportProvider',
+      'object' => '{"id":1,"name":"modx.com","description":"The official MODX transport facility for 3rd party components.","service_url":"http:\\/\\/rest.modx.com\\/extras\\/","username":"","api_key":"","created":"2013-08-28 16:22:53","updated":null}',
+      'guid' => '76efb34339bb8d298bce4988f6d595dc',
+      'native_key' => 1,
+      'signature' => 'd8d882270691f101506771281cab0020',
+    ),
+  ),
+  'package' => 'modx.transport',
+  'class' => 'modTransportProvider',
+  'preserve_keys' => true,
+  'update_object' => true,
+  'vehicle_package' => '',
+  'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+  'signature' => 'c1aa39bb7f1445539be37ce9615e8348',
+  'native_key' => 'd33a48053d281ea06c2c9076af6055e7',
+);

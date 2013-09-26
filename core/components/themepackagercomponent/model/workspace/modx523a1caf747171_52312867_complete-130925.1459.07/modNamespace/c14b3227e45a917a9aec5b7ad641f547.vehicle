@@ -1,0 +1,40 @@
+<?php return array (
+  'guid' => '65d0f1a1706c2104bb8ce401cbaeaa78',
+  'object' => 
+  array (
+    0 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modNamespace',
+      'object' => '{"name":"core","path":"{core_path}","assets_path":"{assets_path}"}',
+      'guid' => 'dfd5b039cd9d1dd312e9c9445abf680e',
+      'native_key' => 'core',
+      'signature' => 'b9b3b0a0802f0ccbed717747a7a425e1',
+    ),
+    1 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modNamespace',
+      'object' => '{"name":"themepackagercomponent","path":"\\/Users\\/mike\\/Sites\\/Extras\\/TPC\\/core\\/components\\/themepackagercomponent\\/","assets_path":""}',
+      'guid' => 'accc09273c12d8a9c5ee2e7f829ca2d6',
+      'native_key' => 'themepackagercomponent',
+      'signature' => 'ac20f95942cf9d1584559f4d2f6e4738',
+    ),
+  ),
+  'package' => 'modx',
+  'class' => 'modNamespace',
+  'preserve_keys' => true,
+  'update_object' => true,
+  'vehicle_package' => '',
+  'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+  'signature' => 'c14b3227e45a917a9aec5b7ad641f547',
+  'native_key' => '65d0f1a1706c2104bb8ce401cbaeaa78',
+);

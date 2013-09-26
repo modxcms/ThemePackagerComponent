@@ -30,11 +30,11 @@ class Extract extends Action {
     public function process() {
         parent::process();
         try {
-            $this->profile = $this->loadProfile($this->profile);
-            $this->tpl = $this->loadTpl($this->tpl);
+            $this->profile = $this->loadProfile($this->request->profile);
+            $this->tpl = $this->loadTpl($this->request->tpl);
 
-            define('MODX_CORE_PATH', $this->profile->properties->modx->core_path);
-            define('MODX_CONFIG_KEY', !empty($this->profile->properties->modx->config_key) ? $this->profile->properties->modx->config_key : 'config');
+            if (!defined('MODX_CORE_PATH')) define('MODX_CORE_PATH', $this->profile->properties->modx->core_path);
+            if (!defined('MODX_CONFIG_KEY')) define('MODX_CONFIG_KEY', !empty($this->profile->properties->modx->config_key) ? $this->profile->properties->modx->config_key : 'config');
 
             $this->initMODX();
 
@@ -115,7 +115,7 @@ class Extract extends Action {
         $filename = $signature . '.transport.zip';
 
         /* remove the package if it's already been made */
-        $directory = SIPHON_BASE_PATH . 'workspace/';
+        $directory = $this->getWorkspaceDir();
         if (file_exists($directory . $filename)) {
             unlink($directory . $filename);
         }

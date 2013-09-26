@@ -84,6 +84,10 @@ abstract class Action {
      * the attempt.
      */
     public function initMODX() {
+        $this->modx = $this->request->args('modx');
+        if (is_object($this->modx)) {
+            return;
+        }
         if (defined('MODX_CORE_PATH')) {
             try {
                 include MODX_CORE_PATH . 'model/modx/modx.class.php';
@@ -129,5 +133,18 @@ abstract class Action {
             throw new \Siphon\SiphonException("Error getting 'code' from profile {$profile}", $this->request->results);
         }
         return $decoded;
+    }
+
+    /**
+     * Get the workspace directory for this instance
+     *
+     * @return mixed|string
+     */
+    protected function getWorkspaceDir() {
+        return $this->request->workspace_path ? $this->request->workspace_path : SIPHON_BASE_PATH . 'workspace/';
+    }
+
+    protected function getProfileFilename() {
+        return $this->request->profile_filename ? $this->request->profile_filename : $this->code . '.profile.json';
     }
 }

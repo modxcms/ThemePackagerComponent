@@ -72,7 +72,7 @@ TP.panel.Home = function(config) {
                     ,name: 'everything'
                     ,fieldLabel: _('themepackagercomponent.everything')
                     ,description: _('themepackagercomponent.everything_desc')
-                    ,value: 'yes'
+                    ,inputValue: 'yes'
                     ,checked: true
                     ,listeners: {
                         check: {

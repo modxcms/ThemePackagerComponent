@@ -1,0 +1,48 @@
+<?php return array (
+  'guid' => 'aa70a84dc3845745db491bcff746d7b8',
+  'object' => 
+  array (
+    0 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modContextSetting',
+      'object' => '{"context_key":"mgr","key":"allow_tags_in_post","value":"1","xtype":"combo-boolean","namespace":"core","area":"system","editedon":"0000-00-00 00:00:00"}',
+      'guid' => 'bd0f821ed7f8e6d354ac4b8de185943d',
+      'native_key' => 
+      array (
+        0 => 'mgr',
+        1 => 'allow_tags_in_post',
+      ),
+      'signature' => '14f0ee7959b5f9351eeaf78aa246ef0b',
+    ),
+    1 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modContextSetting',
+      'object' => '{"context_key":"mgr","key":"modRequest.class","value":"modManagerRequest","xtype":"textfield","namespace":"core","area":"system","editedon":"0000-00-00 00:00:00"}',
+      'guid' => '636a2d3ce22d9aecd74f41775ddd7f60',
+      'native_key' => 
+      array (
+        0 => 'mgr',
+        1 => 'modRequest.class',
+      ),
+      'signature' => '3e9d2aff45f63aceaff90fec5292874a',
+    ),
+  ),
+  'package' => 'modx',
+  'class' => 'modContextSetting',
+  'preserve_keys' => true,
+  'update_object' => true,
+  'vehicle_package' => '',
+  'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+  'signature' => '1864a14a92f8ef1720e87e3fea3f6849',
+  'native_key' => 'aa70a84dc3845745db491bcff746d7b8',
+);

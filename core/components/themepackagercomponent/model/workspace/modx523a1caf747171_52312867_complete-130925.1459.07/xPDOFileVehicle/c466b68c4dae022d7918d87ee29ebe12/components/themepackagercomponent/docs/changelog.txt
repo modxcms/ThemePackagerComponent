@@ -1,0 +1,30 @@
+Changelog for ThemePackagerComponent
+
+ThemePackagerComponent 1.0.0
+====================================
+- fork from PackMan
+
+PackMan 1.2.0
+====================================
+- sqlsrv support
+- [#10] Add ability to unload a profile after loading it, consolidate buttons
+- [#14] Added changelog option to builder
+- [#6] Fix bug where package namespace path is set incorrectly
+- [#4] Rename first tab title to Package
+- Subpackages now install into packages grid and can be updated
+
+PackMan 1.1.0
+====================================
+- Added French, German translations
+- Fixed auth check
+- Added ability to package in Plugins
+- Added Profiles, which allow you to save package form state
+
+PackMan 1.0.0
+====================================
+- Added in lexicon entries, prepared for 1.0.0 release
+- Added ability to package in Transport Packages (as subpackages)
+- Added ability to attach core/assets directories to Snippets
+- Added ability to package in Chunks and Snippets
+- Added ability to package in multiple Templates, TVs for those Templates
+- Initial commit

@@ -65,8 +65,9 @@ $version = $_POST['version'];
 $release = $_POST['release'];
 
 /* format package name */
-$name_lower = strtolower($_POST['category']);
-$name_lower = str_replace(array(' ','-','.','*','!','@','#','$','%','^','&','_'),'',$name_lower);
+$name = $_POST['category'];
+$name = str_replace(array(' ','-','.','*','!','@','#','$','%','^','&','_'),'',$name);
+$name_lower = strtolower($name);
 
 /* define file paths and string replacements */
 $directories = array();
@@ -87,31 +88,61 @@ $pathLookups = array(
 $params = array(
     'version'=> $version
     ,'release'=> $release
+    ,'name'=> $name
     ,'name_lower'=> $name_lower
     ,'directories'=> $directories
     ,'cachePath'=> $cachePath
     ,'pathLookups'=> $pathLookups
+    ,'s3' => array(
+        'key' => '',
+        'secretKey' => ''
+    ),
 );
 
 $everything = $modx->getOption('everything', $_POST, 'no');
 $params = array_merge($_POST, $params);
 if ($everything == 'yes') {
+
+    $workspaceDir = $modx->getOption('siphon.workspace_path', null, $modx->getCachePath() . 'siphon/workspace/');
+    $templatesDir = $modx->getOption('siphon.templates_path', null, $modx->getCachePath() . 'siphon/templates/');
+    $profileFilename = $modx->site_id . '.profile.json';
+
     // ensure Siphon profile exists for this site
+    if (!file_exists($profilePath)) {
+        $profileParams = array(
+            'action'=> 'Profile'
+            ,'name'=> $params['name']
+            ,'code'=> $params['name_lower']
+            ,'core_path'=> MODX_CORE_PATH
+            ,'s3'=> $params['s3']
+            ,'modx'=> $modx
+            ,'workspace_path'=> $workspaceDir
+            ,'profile_filename' => $profileFilename
+        );
+        require_once $modx->tp->config['corePath'] . '/controllers/Siphon.php';
+        $builder = new \Siphon\Request(array_merge($config, $profileParams));
+        $builder->handle();
+        $result = $builder->getResults();
+        $response = $modx->error->success(end($result));
+    }
 
     // get config (S3 stuff) from MODX config
     $config = array();
     //$config[''] = '';
 
     // set up arguments for Siphon extract call
-    $params['action'] = 'extract';
-    $params['profile'] = 'workspace/mysite.profile.json';
+    $params['action'] = 'Extract';
+    $params['modx'] = $modx;
+    $params['workspace_path'] = $workspaceDir;
+    $params['profile'] = $workspaceDir . $profileFilename;
     // @todo create new template, custom + end user options
-    $params['tpl'] = 'tpl/complete.tpl.json';
+    //$params['tpl'] = $templatesDir . 'custom.tpl.json';
+    $params['tpl'] = $modx->tp->config['corePath'] . 'tpl/complete.tpl.json';
 
     // run Siphon
     try {
-        $result = include (dirname(dirname(dirname(__FILE__))) . '/controllers/Siphon.php');
-        $builder = new \Siphon\Request(array_merge($config, \Siphon\Request::parseArguments($params)));
+        require_once $modx->tp->config['corePath'] . '/controllers/Siphon.php';
+        $builder = new \Siphon\Request(array_merge($config, $params));
         $builder->handle();
         $result = $builder->getResults();
         $response = $modx->error->success(end($result));
@@ -125,10 +156,12 @@ if ($everything == 'yes') {
     }
 
 } else {
-    // load packman builder
+
+    // load and run packman builder
     $params = array_merge($_POST, $params);
-    $builder = $modx->getService('tpcBuilder', 'Modx_tpcPackManBuilder', $modx->tp->config['core_path'], $params);
+    $builder = $modx->getService('tpcBuilder', 'Modx_tpcPackManBuilder', $modx->tp->config['corePath'], $params);
     /** @var modError $result */
     $response = $builder->handle();
+
 }
 return $response;

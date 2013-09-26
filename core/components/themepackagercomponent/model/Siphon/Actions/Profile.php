@@ -25,8 +25,8 @@ class Profile extends Action {
                 $this->code = str_replace(array('-', '.'), array('_', '_'), $this->name);
             }
 
-            define('MODX_CORE_PATH', $this->core_path);
-            define('MODX_CONFIG_KEY', $this->config_key);
+            if (!defined('MODX_CORE_PATH')) define('MODX_CORE_PATH', $this->core_path);
+            if (!defined('MODX_CONFIG_KEY')) define('MODX_CONFIG_KEY', $this->config_key);
 
             $this->initMODX();
 
@@ -47,14 +47,16 @@ class Profile extends Action {
                 ),
             );
 
-            $profileFilename = SIPHON_BASE_PATH . 'workspace/' . $this->code . '.profile.json';
-            file_put_contents($profileFilename, $this->modx->toJSON($profile));
+            $workspacePath = $this->getWorkspaceDir();
+            $profileFileName = $this->getProfileFilename();
+            $profileFilePath = $workspacePath . $profileFileName;
+            $this->modx->cacheManager->writeFile($profileFilePath, $this->modx->toJSON($profile));
 
             if ($this->target && $this->push) {
-                if (!$this->push($profileFilename, $this->target)) {
-                    throw new \Siphon\RequestException("Error pushing profile {$profileFilename} to {$this->target}", $this->request->results);
+                if (!$this->push($profileFilePath, $this->target)) {
+                    throw new \Siphon\RequestException("Error pushing profile {$profileFilePath} to {$this->target}", $this->request->results);
                 }
-                $this->request->log("Successfully pushed profile {$profileFilename} to {$this->target}");
+                $this->request->log("Successfully pushed profile {$profileFilePath} to {$this->target}");
             }
         } catch (\Exception $e) {
             throw new \Siphon\RequestException("Error generating profile: " . $e->getMessage(), $this->request->results, $e);

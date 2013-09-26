@@ -1,0 +1,27 @@
+<?php return array (
+  'guid' => 'ea2271a2e825125f6c5eb5dec99cae37',
+  'object' => 
+  array (
+    0 => 
+    array (
+      'preserve_keys' => true,
+      'update_object' => true,
+      'vehicle_package' => '',
+      'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+      'package' => 'modx',
+      'class' => 'modUser',
+      'object' => '{"id":1,"username":"mks","password":"CDTiToPgj+bE1s5FQfsa1mmpDDfhtEoMMAynFx1kY70=","cachepwd":"","class_key":"modUser","active":1,"remote_key":null,"remote_data":null,"hash_class":"hashing.modPBKDF2","salt":"cc0fa23d6130f73674d7ced9a75b90c2","primary_group":1,"session_stale":null,"sudo":1}',
+      'guid' => '76883d414ef8c808199d0de99961199d',
+      'native_key' => 1,
+      'signature' => '286d993bb63a57b83c55abe198a75b86',
+    ),
+  ),
+  'package' => 'modx',
+  'class' => 'modUser',
+  'preserve_keys' => true,
+  'update_object' => true,
+  'vehicle_package' => '',
+  'vehicle_class' => '\\Siphon\\Transport\\SiphonXPDOCollectionVehicle',
+  'signature' => '93e528f68f9feb07b792a7e3ff891e6c',
+  'native_key' => 'ea2271a2e825125f6c5eb5dec99cae37',
+);
