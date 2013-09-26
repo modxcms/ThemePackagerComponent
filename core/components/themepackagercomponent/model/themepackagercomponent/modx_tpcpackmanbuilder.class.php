@@ -18,9 +18,6 @@ class Modx_tpcPackManBuilder implements Modx_Package_Builder {
     public function __construct (modX &$modx, array $param) {
         $this->modx = $modx;
         $this->parameters = $param;
-        //if (!$this->modx->lexicon) {
-        //    $this->modx->getService('lexicon','modLexicon');
-        //}
     }
 
     function handle() {
