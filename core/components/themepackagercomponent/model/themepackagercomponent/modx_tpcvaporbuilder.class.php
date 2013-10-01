@@ -26,8 +26,11 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
         $startTime = microtime(true);
         $modx = &$this->modx;
 
-        // @todo get proper path here
-        define('VAPOR_DIR', realpath(dirname(__FILE__)) . '/');
+        $version = $this->parameters['version'];
+        $release = $this->parameters['release'];
+        $name_lower = $this->parameters['name_lower'];
+
+        define('VAPOR_DIR', $modx->tp->config['corePath']);
         define('VAPOR_VERSION', '1.2.0-dev');
 
         // @todo load options from settings
@@ -100,10 +103,9 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                 $modx->log(modX::LOG_LEVEL_FATAL, "no workspace!");
             }
 
-            // @todo confirm desired format of package name
-            if (!defined('PKG_NAME')) define('PKG_NAME', str_replace(array('-', '.'), array('_', '_'), $modx->getOption('http_host', $options, 'vapor_export')));
-            define('PKG_VERSION', strftime("%y%m%d.%H%M.%S", $startTime));
-            define('PKG_RELEASE', $modxVersion);
+            if (!defined('PKG_NAME')) define('PKG_NAME', str_replace(array('-', '.'), array('_', '_'), $name_lower));
+            define('PKG_VERSION', $version);
+            define('PKG_RELEASE', $release);
 
             $package = $builder->createPackage(PKG_NAME, PKG_VERSION, PKG_RELEASE);
 
@@ -261,21 +263,21 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
             $package->put(
                 array(
                     'source' => VAPOR_DIR . 'model/vapor',
-                    'target' => "return MODX_CORE_PATH . 'components/vapor/model/';"
+                    'target' => "return MODX_CORE_PATH . 'components/themepackagercomponent/model/';"
                 ),
                 array(
                     'vehicle_class' => 'xPDOFileVehicle',
                     'validate' => array(
                         array(
                             'type' => 'php',
-                            'source' => VAPOR_DIR . 'scripts/validate.truncate_tables.php',
+                            'source' => VAPOR_DIR . 'includes/scripts/validate.truncate_tables.php',
                             'classes' => $classes
                         ),
                     ),
                     'resolve' => array(
                         array(
                             'type' => 'php',
-                            'source' => VAPOR_DIR . 'scripts/resolve.vapor_model.php'
+                            'source' => VAPOR_DIR . 'includes/scripts/resolve.vapor_model.php'
                         )
                     )
                 )
@@ -326,7 +328,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         'resolve' => array(
                             array(
                                 'type' => 'php',
-                                'source' => VAPOR_DIR . 'scripts/resolve.extension_packages.php'
+                                'source' => VAPOR_DIR . 'includes/scripts/resolve.extension_packages.php'
                             ),
                         )
                     )
@@ -369,11 +371,16 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         }
                         $modx->log(modX::LOG_LEVEL_INFO, "Packaged {$instances} of {$class}");
                         continue 2;
+                    case 'modMenu':
+                        $classCriteria = array('text:!='=> 'themepackagercomponent');
+                        break;
                     case 'transport.modTransportPackage':
                         $modx->loadClass($class);
                         $response = $modx->call('modTransportPackage', 'listPackages', array(&$modx, $workspace->get('id')));
                         if (isset($response['collection'])) {
                             foreach ($response['collection'] as $object) {
+                                // don't package TPC
+                                if ($object->get('package_name') == 'themepackagercomponent') continue;
                                 $packagesDir = MODX_CORE_PATH . 'packages/';
                                 if ($object->getOne('Workspace')) {
                                     $packagesDir = $object->Workspace->get('path') . 'packages/';
@@ -414,7 +421,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                                         $sourceBasePath = str_replace($base_path, '', $sourceBasePath);
                                         $classAttributes['resolve'][] = array(
                                             'type' => 'php',
-                                            'source' => VAPOR_DIR . 'scripts/resolve.media_source.php',
+                                            'source' => VAPOR_DIR . 'includes/scripts/resolve.media_source.php',
                                             'target' => $sourceBasePath,
                                             'targetRelative' => true
                                         );
@@ -431,7 +438,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                                         );
                                         $classAttributes['resolve'][] = array(
                                             'type' => 'php',
-                                            'source' => VAPOR_DIR . 'scripts/resolve.media_source.php',
+                                            'source' => VAPOR_DIR . 'includes/scripts/resolve.media_source.php',
                                             'target' => $sourceBasePath,
                                             'targetRelative' => false,
                                             'targetPrepend' => "return dirname(MODX_BASE_PATH) . '/sources/';"
@@ -574,8 +581,8 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
 
             $returnMessage = sprintf("Vapor execution completed without exception in %2.4fs\n", $endTime - $startTime);
 
-            // @todo find $signature
-            $return = $modx->error->success($signature)
+            $signature = $package->signature;
+            $return = $modx->error->success($signature);
 
         } catch (Exception $e) {
             if (empty($endTime)) $endTime = microtime(true);
@@ -597,7 +604,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
         $modx->setOption(xPDO::OPT_SETUP, $originalOptSetup);
         $modx->setDebug($originalDebug);
 
-        // @todo refactor to return message and/or path to download
+        // @todo refactor client to accept return success or fail response with message and/or path to download
         return $return;
 
     }

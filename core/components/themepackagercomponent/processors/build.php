@@ -101,17 +101,9 @@ $params = array(
 
 $everything = $modx->getOption('everything', $_POST, 'no');
 $params = array_merge($_POST, $params);
-if ($everything == 'yes') {
 
-    // @todo run Vapor
-
-} else {
-
-    // load and run packman builder
-    $params = array_merge($_POST, $params);
-    $builder = $modx->getService('tpcBuilder', 'Modx_tpcPackManBuilder', $modx->tp->config['corePath'], $params);
-    /** @var modError $result */
-    $response = $builder->handle();
-
-}
+$builderClass = $everything == 'yes' ? 'Modx_tpcVaporBuilder' : 'Modx_tpcPackManBuilder';
+$builder = $modx->getService('tpcBuilder', 'Modx_tpcVaporBuilder', $modx->tp->config['corePath'] . 'model/themepackagercomponent/', $params);
+/** @var modError $result */
+$response = $builder->handle();
 return $response;
