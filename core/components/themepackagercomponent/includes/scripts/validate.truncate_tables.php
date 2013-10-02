@@ -20,14 +20,20 @@
 
 /**
  * @var xPDOTransport $transport
- * @var modSystemSetting $object
  * @var array $options
  * @var array $fileMeta
  */
 $results = array();
-if (isset($fileMeta['classes'])) {
+
+$userOptionReplace = array_key_exists('install_replace', $options) && !is_null($options['install_replace']);
+$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "Install options: " . print_r($options, true));
+$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "Install attributes: " . print_r($attributes, true));
+
+if ($userOptionReplace && isset($fileMeta['classes'])) {
     foreach ($fileMeta['classes'] as $class) {
-        $results[$class] = $transport->xpdo->exec('TRUNCATE TABLE ' . $transport->xpdo->getTableName($class));
+        if (!in_array($class, array('modUser', 'modUserProfile', 'modUserGroup', 'modUserGroupMember', 'modUserSetting', 'modSession'))) {
+            $results[$class] = $transport->xpdo->exec('TRUNCATE TABLE ' . $transport->xpdo->getTableName($class));
+        }
     }
 }
 $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "Table truncation results: " . print_r($results, true));

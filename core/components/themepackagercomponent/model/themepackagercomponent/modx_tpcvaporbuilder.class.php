@@ -188,10 +188,6 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                 );
             }
 
-            $attributes = array(
-                'vehicle_class' => 'xPDOFileVehicle'
-            );
-
             /* get all files from the components directory */
             $modx->log(modX::LOG_LEVEL_INFO, "Packaging " . MODX_CORE_PATH . 'components');
             $package->put(
@@ -379,8 +375,8 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         $response = $modx->call('modTransportPackage', 'listPackages', array(&$modx, $workspace->get('id')));
                         if (isset($response['collection'])) {
                             foreach ($response['collection'] as $object) {
-                                // don't package TPC
-                                if ($object->get('package_name') == 'themepackagercomponent') continue;
+                                // don't package self
+                                //if ($object->get('package_name') == 'themepackagercomponent') continue;
                                 $packagesDir = MODX_CORE_PATH . 'packages/';
                                 if ($object->getOne('Workspace')) {
                                     $packagesDir = $object->Workspace->get('path') . 'packages/';
@@ -562,6 +558,27 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                     }
                 }
             }
+
+            // include license, readme, changelog and setup options and some other options in package attributes
+            $packageAttributes = array();
+            if (isset($_FILES['license']) && !empty($_FILES['license']) && $_FILES['license']['error'] == UPLOAD_ERR_OK) {
+                $packageAttributes['license'] = file_get_contents($_FILES['license']['tmp_name']);
+            }
+            if (isset($_FILES['readme']) && !empty($_FILES['readme']) && $_FILES['readme']['error'] == UPLOAD_ERR_OK) {
+                $packageAttributes['readme'] = file_get_contents($_FILES['readme']['tmp_name']);
+            }
+            if (isset($_FILES['changelog']) && !empty($_FILES['changelog']) && $_FILES['changelog']['error'] == UPLOAD_ERR_OK) {
+                $packageAttributes['changelog'] = file_get_contents($_FILES['changelog']['tmp_name']);
+            }
+            if ($this->parameters['enduser_option_merge'] == 'yes' || $this->parameters[''] == 'yes') {
+                $packageAttributes['setup-options'] = array('source' => VAPOR_DIR . 'includes/scripts/setup.options.php');
+            }
+            $packageAttributes['enduser_option_merge'] = $this->parameters['enduser_option_merge'];
+            $packageAttributes['enduser_install_action_default'] = $this->parameters['enduser_install_action_default'];
+            $packageAttributes['enduser_option_samplecontent'] = $this->parameters['enduser_option_samplecontent'];
+
+            $builder->setPackageAttributes($packageAttributes);
+            $modx->log(modX::LOG_LEVEL_INFO,'Packaged in package attributes.'); flush();
 
             if (!ini_get('safe_mode')) {
                 set_time_limit(0);
