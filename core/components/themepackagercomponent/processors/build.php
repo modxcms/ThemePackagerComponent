@@ -102,7 +102,8 @@ $params = array(
 $everything = $modx->getOption('everything', $_POST, 'no');
 $params = array_merge($_POST, $params);
 
-$builderClass = $everything == 'yes' ? 'Modx_tpcVaporBuilder' : 'Modx_tpcPackManBuilder';
+//$builderClass = $everything == 'yes' ? 'Modx_tpcVaporBuilder' : 'Modx_tpcPackManBuilder';
+$builderClass = 'Modx_tpcVaporBuilder';
 $builder = $modx->getService('tpcBuilder', 'Modx_tpcVaporBuilder', $modx->tp->config['corePath'] . 'model/themepackagercomponent/', $params);
 /** @var modError $result */
 $response = $builder->handle();

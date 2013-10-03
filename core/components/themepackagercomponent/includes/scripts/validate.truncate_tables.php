@@ -21,20 +21,26 @@
 /**
  * @var xPDOTransport $transport
  * @var array $options
+ * - setup-options setup options php script
+ * - enduser_option_merge yes
+ * - enduser_install_action_default merge|replace
+ * - enduser_option_samplecontent yes
+ * - sample_content true
+ * - action install
+ *
  * @var array $fileMeta
  */
 $results = array();
 
-$userOptionReplace = array_key_exists('install_replace', $options) && !is_null($options['install_replace']);
-$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "Install options: " . print_r($options, true));
-$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "Install attributes: " . print_r($attributes, true));
+$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, '[truncate] $options: ' . print_r($options, true));
+
+$userOptionReplace = array_key_exists('install_replace', $options) && $options['install_replace'] == 'true';
 
 if ($userOptionReplace && isset($fileMeta['classes'])) {
+    $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Replace indicated, truncating tables...");
     foreach ($fileMeta['classes'] as $class) {
-        if (!in_array($class, array('modUser', 'modUserProfile', 'modUserGroup', 'modUserGroupMember', 'modUserSetting', 'modSession'))) {
-            $results[$class] = $transport->xpdo->exec('TRUNCATE TABLE ' . $transport->xpdo->getTableName($class));
-        }
+        $results[$class] = $transport->xpdo->exec('TRUNCATE TABLE ' . $transport->xpdo->getTableName($class));
     }
 }
-$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "Table truncation results: " . print_r($results, true));
+$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Table truncation results: " . print_r($results, true));
 return !array_search(false, $results, true);

@@ -109,8 +109,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
 
             $package = $builder->createPackage(PKG_NAME, PKG_VERSION, PKG_RELEASE);
 
-            // @todo make the following dynamic based on $this->parameters
-            /* Defines the classes to extract (also used for truncation) */
+            /* Defines the classes to extract */
             $classes= array (
                 'modAccessAction',
                 'modAccessActionDom',
@@ -174,7 +173,6 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                 'transport.modTransportProvider',
                 'transport.modTransportPackage',
             );
-
             if (version_compare($modxVersion, '2.2.0', '>=')) {
                 array_push(
                     $classes,
@@ -187,6 +185,11 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                     'sources.modMediaSourceContext'
                 );
             }
+            $classesToTruncate = array(
+                'modChunk',
+                'modCategory',
+                'modCategoryClosure',
+            );
 
             /* get all files from the components directory */
             $modx->log(modX::LOG_LEVEL_INFO, "Packaging " . MODX_CORE_PATH . 'components');
@@ -200,16 +203,16 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                 )
             );
             /* get all files from the assets directory */
-            $modx->log(modX::LOG_LEVEL_INFO, "Packaging " . MODX_BASE_PATH . 'assets');
-            $package->put(
-                array(
-                    'source' => MODX_BASE_PATH . 'assets',
-                    'target' => 'return MODX_BASE_PATH;'
-                ),
-                array(
-                    'vehicle_class' => 'xPDOFileVehicle'
-                )
-            );
+            //$modx->log(modX::LOG_LEVEL_INFO, "Packaging " . MODX_BASE_PATH . 'assets');
+            //$package->put(
+            //    array(
+            //        'source' => MODX_BASE_PATH . 'assets',
+            //        'target' => 'return MODX_BASE_PATH;'
+            //    ),
+            //    array(
+            //        'vehicle_class' => 'xPDOFileVehicle'
+            //    )
+            //);
             /* find other files/directories in the MODX_BASE_PATH */
             $excludes = array(
                 '_build',
@@ -267,7 +270,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         array(
                             'type' => 'php',
                             'source' => VAPOR_DIR . 'includes/scripts/validate.truncate_tables.php',
-                            'classes' => $classes
+                            'classes' => $classesToTruncate
                         ),
                     ),
                     'resolve' => array(
@@ -280,7 +283,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
             );
 
             $attributes = array(
-                'preserve_keys' => true,
+                'preserve_keys' => false,
                 'update_object' => true
             );
 
@@ -341,13 +344,43 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                 $classCriteria = null;
                 $classAttributes = $attributes;
                 switch ($class) {
-                    case 'modSession':
-                        /* skip sessions */
+                    case 'modChunk':
+                        $classAttributes['unique_key'] = 'name';
+                        $classAttributes['related_objects'] = true;
+                        $classAttributes['related_object_attributes'] = array(
+                            'PropertySets'=> array(
+                                'preserve_keys'=> false,
+                                'update_object'=> true,
+                                'unique_key'=> array("element", "element_class", "property_set"),
+                                'related_objects'=> true,
+                                'related_object_attributes'=> array(
+                                    'PropertySet'=> array(
+                                        'preserve_keys'=> false,
+                                        'update_object'=> true,
+                                        'unique_key'=> 'name'
+                                    )
+                                )
+                            ),
+                            'Category'=> array(
+                                'preserve_keys'=> false,
+                                'update_object'=> true,
+                                'unique_key'=> 'category'
+                            )
+                        );
+                        $Chunks = $modx->getCollectionGraph($class, '{"Category":{}}', $classCriteria);
+                        foreach ($Chunks as $object) {
+                            if ($package->put($object, $classAttributes)) {
+                                $instances++;
+                            } else {
+                                $modx->log(modX::LOG_LEVEL_WARN, "Could not package {$class} instance with pk: " . print_r($object->getPrimaryKey()));
+                            }
+                        }
                         continue 2;
-                    case 'modSystemSetting':
+                        //break;
+                    case 'XXmodSystemSetting':
                         $classCriteria = array('key:!=' => 'extension_packages');
                         break;
-                    case 'modWorkspace':
+                    case 'XXmodWorkspace':
                         /** @var modWorkspace $object */
                         foreach ($modx->getIterator('modWorkspace', $classCriteria) as $object) {
                             if (strpos($object->path, $core_path) === 0) {
@@ -367,7 +400,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         }
                         $modx->log(modX::LOG_LEVEL_INFO, "Packaged {$instances} of {$class}");
                         continue 2;
-                    case 'modMenu':
+                    case 'XXmodMenu':
                         $classCriteria = array('text:!='=> 'themepackagercomponent');
                         break;
                     case 'transport.modTransportPackage':
@@ -376,7 +409,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         if (isset($response['collection'])) {
                             foreach ($response['collection'] as $object) {
                                 // don't package self
-                                //if ($object->get('package_name') == 'themepackagercomponent') continue;
+                                if ($object->get('package_name') == 'themepackagercomponent') continue;
                                 $packagesDir = MODX_CORE_PATH . 'packages/';
                                 if ($object->getOne('Workspace')) {
                                     $packagesDir = $object->Workspace->get('path') . 'packages/';
@@ -404,7 +437,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         }
                         $modx->log(modX::LOG_LEVEL_INFO, "Packaged {$instances} of {$class}");
                         continue 2;
-                    case 'sources.modMediaSource':
+                    case 'XXsources.modMediaSource':
                         foreach ($modx->getIterator('sources.modMediaSource') as $object) {
                             $classAttributes = $attributes;
                             /** @var modMediaSource $object */
@@ -451,7 +484,8 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         $modx->log(modX::LOG_LEVEL_INFO, "Packaged {$instances} of {$class}");
                         continue 2;
                     default:
-                        break;
+                        /* skip everything else */
+                        continue 2;
                 }
                 /** @var xPDOObject $object */
                 foreach ($modx->getIterator($class, $classCriteria) as $object) {
@@ -570,7 +604,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
             if (isset($_FILES['changelog']) && !empty($_FILES['changelog']) && $_FILES['changelog']['error'] == UPLOAD_ERR_OK) {
                 $packageAttributes['changelog'] = file_get_contents($_FILES['changelog']['tmp_name']);
             }
-            if ($this->parameters['enduser_option_merge'] == 'yes' || $this->parameters[''] == 'yes') {
+            if ($this->parameters['enduser_option_merge'] == 'yes' || $this->parameters['enduser_option_samplecontent'] == 'yes') {
                 $packageAttributes['setup-options'] = array('source' => VAPOR_DIR . 'includes/scripts/setup.options.php');
             }
             $packageAttributes['enduser_option_merge'] = $this->parameters['enduser_option_merge'];

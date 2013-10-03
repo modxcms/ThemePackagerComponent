@@ -85,7 +85,7 @@ TP.panel.Home = function(config) {
                                     Ext.getCmp('tpc-tab-subpackages').disable();
                                     Ext.getCmp('tpc-tab-directories').disable();
                                     Ext.getCmp('tpc-tab-resources').disable();
-                                    Ext.getCmp('tpc-enduser-option-samplecontent').setValue(true).disable();
+                                    //Ext.getCmp('tpc-enduser-option-samplecontent').setValue(true).disable();
                                 } else {
                                     Ext.getCmp('tpc-tab-templates').enable();
                                     Ext.getCmp('tpc-tab-chunks').enable();
@@ -94,7 +94,7 @@ TP.panel.Home = function(config) {
                                     Ext.getCmp('tpc-tab-subpackages').enable();
                                     Ext.getCmp('tpc-tab-directories').enable();
                                     Ext.getCmp('tpc-tab-resources').enable();
-                                    Ext.getCmp('tpc-enduser-option-samplecontent').enable();
+                                    //Ext.getCmp('tpc-enduser-option-samplecontent').enable();
                                 }
                             }
                             ,scope: this
@@ -117,7 +117,7 @@ TP.panel.Home = function(config) {
                             ,fieldLabel: _('themepackagercomponent.enduser_option_merge_label')
                             ,description: _('themepackagercomponent.enduser_option_merge_desc')
                             ,checked: true
-                            ,value: 'yes'
+                            ,inputValue: 'yes'
                             ,listeners: {
                                 check: {
                                     fn: function (el, checked) {
@@ -148,14 +148,14 @@ TP.panel.Home = function(config) {
                                     ,id: 'tpc-default-merge-option-picker-merge'
                                     ,name: 'enduser_install_action_default'
                                     ,boxLabel: 'Merge'
-                                    ,value: 'merge'
+                                    ,inputValue: 'merge'
                                     ,checked: true
                                 }, {
                                     xtype: 'radio'
                                     ,id: 'tpc-default-merge-option-picker-replace'
                                     ,name: 'enduser_install_action_default'
                                     ,boxLabel: 'Replace'
-                                    ,value: 'replace'
+                                    ,inputValue: 'replace'
                                 }
                             ]
                         },{
@@ -165,8 +165,7 @@ TP.panel.Home = function(config) {
                             ,fieldLabel: _('themepackagercomponent.enduser_option_samplecontent_label')
                             ,description: _('themepackagercomponent.enduser_option_samplecontent_desc')
                             ,checked: true
-                            ,disabled: true
-                            ,value: 'yes'
+                            ,inputValue: 'yes'
                         }
                     ]
                 }]
