@@ -30,6 +30,9 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
         $release = $this->parameters['release'];
         $name_lower = $this->parameters['name_lower'];
 
+        $everything = $this->parameters['everything'] == 'yes';
+        $chunks = $this->parameters['tp_chunk_ids'];
+
         define('VAPOR_DIR', $modx->tp->config['corePath']);
         define('VAPOR_VERSION', '1.2.0-dev');
 
@@ -367,8 +370,15 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                                 'unique_key'=> 'category'
                             )
                         );
+                        if (!$everything) {
+                            $classCriteria = array('modChunk.id:IN'=> explode(',', $chunks));
+                        }
                         $Chunks = $modx->getCollectionGraph($class, '{"Category":{}}', $classCriteria);
                         foreach ($Chunks as $object) {
+                            // un-nest categories for theme package
+                            if (isset($object->Category) && is_object($object->Category)) {
+                                $object->Category->set('parent', 0);
+                            }
                             if ($package->put($object, $classAttributes)) {
                                 $instances++;
                             } else {

@@ -185,14 +185,35 @@ TP.panel.Home = function(config) {
                 title: _('themepackagercomponent.chunks')
                 ,id: 'tpc-tab-chunks'
                 ,disabled: true
-                ,items: [{
-                    html: _('themepackagercomponent.chunks.intro_msg')
-                    ,border: false
-                },{
-                    xtype: 'tp-grid-chunks'
-                    ,id: 'tp-grid-chunks'
-                    ,preventRender: true
-                }]
+                ,items: [
+                    {
+                        html: _('themepackagercomponent.chunks.intro_msg')
+                        ,border: false
+                    }
+                    ,{
+                        xtype: 'hidden'
+                        ,id: 'tp-tree-chunks-selected_ids'
+                        ,name: 'tp_chunk_ids'
+                        ,value: ''
+                    }
+                    ,{
+                        xtype: 'tp-tree-chunks'
+                        ,id: 'tp-tree-chunks-panel'
+                        ,listeners: {
+                            checkchange: function(el,checked) {
+                                if (el.childNodes.length > 0) {
+                                    for (var child in el.childNodes) {
+                                        if (!isNaN(child)) {
+                                            el.childNodes[child].ui.checkbox.checked = checked
+                                            el.childNodes[child].attributes.checked = checked
+                                        }
+                                    }
+                                }
+                                this.updateSelected();
+                            }
+                        }
+                    }
+                ]
             },{
                 title: _('themepackagercomponent.snippets_custom')
                 ,id: 'tpc-tab-snippets'
@@ -261,8 +282,8 @@ Ext.extend(TP.panel.Home,MODx.FormPanel,{
     beforeSubmit: function(o) {
         Ext.apply(o.form.baseParams,{
             templates: Ext.getCmp('tp-grid-templates').encode()
-            ,chunks: Ext.getCmp('tp-grid-chunks').encode()
             ,snippets: Ext.getCmp('tp-grid-snippets').encode()
+            ,chunks: Ext.getCmp('tp-tree-chunks-selected_ids').getValue()
             ,plugins: Ext.getCmp('tp-grid-plugins').encode()
             ,packages: Ext.getCmp('tp-grid-packages').encode()
             ,directories: Ext.getCmp('tp-grid-directories').encode()
@@ -274,7 +295,6 @@ Ext.extend(TP.panel.Home,MODx.FormPanel,{
 
             Ext.getCmp('tp-btn-export').setDisabled(false);
             Ext.getCmp('tp-grid-templates').getStore().commitChanges();
-            Ext.getCmp('tp-grid-chunks').getStore().commitChanges();
             Ext.getCmp('tp-grid-snippets').getStore().commitChanges();
             Ext.getCmp('tp-grid-plugins').getStore().commitChanges();
             Ext.getCmp('tp-grid-packages').getStore().commitChanges();

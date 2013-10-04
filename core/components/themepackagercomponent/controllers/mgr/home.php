@@ -29,6 +29,7 @@
 $modx = $this->modx;
 $modx->regClientStartupScript($this->config['jsUrl'].'templates.grid.js');
 $modx->regClientStartupScript($this->config['jsUrl'].'chunks.grid.js');
+$modx->regClientStartupScript($this->config['jsUrl'].'chunks.tree.js');
 $modx->regClientStartupScript($this->config['jsUrl'].'snippets.grid.js');
 $modx->regClientStartupScript($this->config['jsUrl'].'plugins.grid.js');
 $modx->regClientStartupScript($this->config['jsUrl'].'packages.grid.js');
