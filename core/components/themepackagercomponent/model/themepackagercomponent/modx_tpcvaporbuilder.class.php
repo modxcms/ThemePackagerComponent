@@ -193,6 +193,13 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                 'modChunk',
                 'modCategory',
                 'modCategoryClosure',
+                'modElementPropertySet',
+                'modManagerLog',
+                'modTemplate',
+                'modTemplateVar',
+                'modTemplateVarTemplate',
+                'modTemplateVarResource',
+                'modTemplateVarResourceGroup',
             );
 
             /* get all files from the components directory */
@@ -408,12 +415,24 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                                 'preserve_keys'=> false,
                                 'update_object'=> true,
                                 'unique_key'=> 'category'
+                            ),
+                            'TemplateVarTemplates'=> array(
+                                'preserve_keys'=> false,
+                                'update_object'=> true,
+                                'related_objects'=> true,
+                                'related_object_attributes'=> array(
+                                    'TemplateVar'=> array(
+                                        'preserve_keys'=> false,
+                                        'update_object'=> true,
+                                        'unique_key'=> 'name'
+                                    )
+                                )
                             )
                         );
                         if (!$everything) {
                             $classCriteria = array('modTemplate.id:IN'=> explode(',', $templates));
                         }
-                        $Templates = $modx->getCollectionGraph($class, '{"Category":{}}', $classCriteria);
+                        $Templates = $modx->getCollectionGraph($class, '{"Category":{},"TemplateVarTemplates":{"TemplateVar":{}},"PropertySets":{"PropertySet":{}}}', $classCriteria);
                         foreach ($Templates as $object) {
                             // un-nest categories for theme package
                             if (isset($object->Category) && is_object($object->Category)) {
@@ -458,7 +477,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         if (isset($response['collection'])) {
                             foreach ($response['collection'] as $object) {
                                 // don't package self
-                                if ($object->get('package_name') == 'themepackagercomponent') continue;
+                                //if ($object->get('package_name') == 'themepackagercomponent') continue;
                                 $packagesDir = MODX_CORE_PATH . 'packages/';
                                 if ($object->getOne('Workspace')) {
                                     $packagesDir = $object->Workspace->get('path') . 'packages/';
