@@ -1,10 +1,10 @@
-TP.tree.Chunks = function(config) {
+TP.tree.Templates = function(config) {
     config = config || {};
     Ext.applyIf(
         config,
         {
-            id: 'tp-tree-chunks'
-            ,dataUrl: TP.config.connector_url + '?action=chunk/getTree'
+            id: 'tp-tree-templates'
+            ,dataUrl: TP.config.connector_url + '?action=template/getTree'
             ,fields: ['id','name']
             ,data: []
             ,border: false
@@ -14,20 +14,20 @@ TP.tree.Chunks = function(config) {
             }
         }
     );
-    TP.tree.Chunks.superclass.constructor.call(this,config);
+    TP.tree.Templates.superclass.constructor.call(this,config);
 }
-Ext.extend(TP.tree.Chunks,Ext.tree.TreePanel,{
+Ext.extend(TP.tree.Templates,Ext.tree.TreePanel,{
     updateSelected: function() {
         var selected = [];
         Ext.each(this.getChecked('id'), function(el){
-            ma = el.match(/^n_chunk_(\d+)$/);
+            ma = el.match(/^n_template_(\d+)$/);
             if (ma != null && ma.length == 2) {
                 selected.push(ma[1]);
             }
         });
-        Ext.getCmp('tp-tree-chunks-selected_ids').setValue(selected.join(','));
+        Ext.getCmp('tp-tree-templates-selected_ids').setValue(selected.join(','));
         return true;
     }
 });
 
-Ext.reg('tp-tree-chunks',TP.tree.Chunks);
+Ext.reg('tp-tree-templates',TP.tree.Templates);

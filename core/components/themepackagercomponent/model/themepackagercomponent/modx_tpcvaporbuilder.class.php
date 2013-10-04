@@ -32,6 +32,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
 
         $everything = $this->parameters['everything'] == 'yes';
         $chunks = $this->parameters['tp_chunk_ids'];
+        $templates = $this->parameters['tp_template_ids'];
 
         define('VAPOR_DIR', $modx->tp->config['corePath']);
         define('VAPOR_VERSION', '1.2.0-dev');
@@ -386,7 +387,45 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                             }
                         }
                         continue 2;
-                        //break;
+                    case 'modTemplate':
+                        $classAttributes['unique_key'] = 'templatename';
+                        $classAttributes['related_objects'] = true;
+                        $classAttributes['related_object_attributes'] = array(
+                            'PropertySets'=> array(
+                                'preserve_keys'=> false,
+                                'update_object'=> true,
+                                'unique_key'=> array("element", "element_class", "property_set"),
+                                'related_objects'=> true,
+                                'related_object_attributes'=> array(
+                                    'PropertySet'=> array(
+                                        'preserve_keys'=> false,
+                                        'update_object'=> true,
+                                        'unique_key'=> 'name'
+                                    )
+                                )
+                            ),
+                            'Category'=> array(
+                                'preserve_keys'=> false,
+                                'update_object'=> true,
+                                'unique_key'=> 'category'
+                            )
+                        );
+                        if (!$everything) {
+                            $classCriteria = array('modTemplate.id:IN'=> explode(',', $templates));
+                        }
+                        $Templates = $modx->getCollectionGraph($class, '{"Category":{}}', $classCriteria);
+                        foreach ($Templates as $object) {
+                            // un-nest categories for theme package
+                            if (isset($object->Category) && is_object($object->Category)) {
+                                $object->Category->set('parent', 0);
+                            }
+                            if ($package->put($object, $classAttributes)) {
+                                $instances++;
+                            } else {
+                                $modx->log(modX::LOG_LEVEL_WARN, "Could not package {$class} instance with pk: " . print_r($object->getPrimaryKey()));
+                            }
+                        }
+                        continue 2;
                     case 'XXmodSystemSetting':
                         $classCriteria = array('key:!=' => 'extension_packages');
                         break;
