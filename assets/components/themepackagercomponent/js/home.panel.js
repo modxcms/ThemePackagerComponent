@@ -114,27 +114,27 @@ TP.panel.Home = function(config) {
                             ,description: _('themepackagercomponent.enduser_option_merge_desc')
                             ,checked: true
                             ,inputValue: 'yes'
-                            ,listeners: {
-                                check: {
-                                    fn: function (el, checked) {
-                                        if (checked) {
-                                            Ext.getCmp('tpc-default-merge-option-picker').hide();
-                                            Ext.getCmp('tpc-default-merge-option-picker-merge').hide();
-                                            Ext.getCmp('tpc-default-merge-option-picker-replace').hide();
-                                        } else {
-                                            Ext.getCmp('tpc-default-merge-option-picker').show();
-                                            Ext.getCmp('tpc-default-merge-option-picker-merge').show();
-                                            Ext.getCmp('tpc-default-merge-option-picker-replace').show();
-                                        }
-                                    }
-                                    ,scope: this
-                                }
-                            }
+//                            ,listeners: {
+//                                check: {
+//                                    fn: function (el, checked) {
+//                                        if (checked) {
+//                                            Ext.getCmp('tpc-default-merge-option-picker').hide();
+//                                            Ext.getCmp('tpc-default-merge-option-picker-merge').hide();
+//                                            Ext.getCmp('tpc-default-merge-option-picker-replace').hide();
+//                                        } else {
+//                                            Ext.getCmp('tpc-default-merge-option-picker').show();
+//                                            Ext.getCmp('tpc-default-merge-option-picker-merge').show();
+//                                            Ext.getCmp('tpc-default-merge-option-picker-replace').show();
+//                                        }
+//                                    }
+//                                    ,scope: this
+//                                }
+//                            }
                         },{
                             xtype: 'radiogroup'
                             ,id: 'tpc-default-merge-option-picker'
                             ,fieldLabel: 'Default install action'
-                            ,hidden: true
+                            ,hidden: false
                             ,description: 'Specify whether your Theme package will Merge with the user\'s site on install, or completely replace it.'
                             ,width: 300
                             ,defaults: {labelSeparator: ''}
@@ -162,6 +162,30 @@ TP.panel.Home = function(config) {
                             ,description: _('themepackagercomponent.enduser_option_samplecontent_desc')
                             ,checked: true
                             ,inputValue: 'yes'
+                        },{
+                            xtype: 'radiogroup'
+                            ,id: 'tpc-default-samplecontent-picker'
+                            ,fieldLabel: 'Sample Content default'
+                            ,hidden: false
+                            ,description: 'Specify whether the Theme install will default to adding your sample content or not.'
+                            ,width: 300
+                            ,defaults: {labelSeparator: ''}
+                            ,items: [
+                                {
+                                    xtype: 'radio'
+                                    ,id: 'tpc-default-samplecontent-picker-yes'
+                                    ,name: 'enduser_install_samplecontent_default'
+                                    ,boxLabel: 'Yes'
+                                    ,inputValue: 'yes'
+                                    ,checked: true
+                                }, {
+                                    xtype: 'radio'
+                                    ,id: 'tpc-default-samplecontent-picker-no'
+                                    ,name: 'enduser_install_samplecontent_default'
+                                    ,boxLabel: 'No'
+                                    ,inputValue: 'no'
+                                }
+                            ]
                         }
                     ]
                 }]

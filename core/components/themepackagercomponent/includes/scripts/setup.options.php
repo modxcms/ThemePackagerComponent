@@ -24,19 +24,34 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 }
 
 if (array_key_exists('enduser_option_merge', $options['attributes']) && $options['attributes']['enduser_option_merge'] == 'yes') {
-    $checked = array_key_exists('enduser_install_action_default', $options['attributes']) && $options['attributes']['enduser_install_action_default'] == 'yes' ? ' checked="checked"' : '';
+    $replace_checked = '';
+    $merge_checked = '';
+    if (array_key_exists('enduser_install_action_default', $options['attributes']) && $options['attributes']['enduser_install_action_default'] == 'replace') {
+        $replace_checked = ' checked="checked"';
+    } else {
+        $merge_checked = ' checked="checked"';
+    }
     $output .= <<<HTML
 <label for="themepackagercomponent-install_replace">Overwrite site with Theme?</label>
-<input type="checkbox" name="install_replace" id="themepackagercomponent-install_replace" value="true" {$checked}/>
+Yes <input type="radio" name="install_replace" id="themepackagercomponent-install_replace-replace" value="replace" {$replace_checked}/>
+&nbsp;&nbsp;No <input type="radio" name="install_replace" id="themepackagercomponent-install_replace-merge" value="merge" {$merge_checked}/>
 <br /><br />
 
 HTML;
 }
 
 if (array_key_exists('enduser_option_samplecontent', $options['attributes']) && $options['attributes']['enduser_option_samplecontent'] == 'yes') {
+    $yes_checked = '';
+    $no_checked = '';
+    if (array_key_exists('enduser_install_samplecontent_default', $options['attributes']) && $options['attributes']['enduser_install_samplecontent_default'] == 'yes') {
+        $yes_checked = ' checked="checked"';
+    } else {
+        $no_checked = ' checked="checked"';
+    }
     $output .= <<<HTML
 <label for="themepackagercomponent-sample_content">Install Sample Content?</label>
-<input type="checkbox" name="sample_content" id="themepackagercomponent-sample_content" value="true" />
+Yes <input type="radio" name="sample_content" id="themepackagercomponent-sample_content-yes" value="yes" {$yes_checked}/>
+&nbsp;&nbsp;No <input type="radio" name="sample_content" id="themepackagercomponent-sample_content-no" value="no" {$no_checked}/>
 <br /><br />
 
 HTML;

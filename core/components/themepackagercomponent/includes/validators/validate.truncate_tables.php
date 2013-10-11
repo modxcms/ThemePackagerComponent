@@ -37,13 +37,15 @@ if ($transport && $transport->xpdo) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
 
-            $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, '[truncate] $options: ' . print_r($options, true));
-
-            $enduser_selected_option_replace = $transport->xpdo->getOption('install_replace', $options, 'false');
-            $enduser_option_merge = $transport->xpdo->getOption('enduser_option_merge', $options, 'false');
             $enduser_install_action_default = $transport->xpdo->getOption('enduser_install_action_default', $options, 'merge');
+            $enduser_selected_option_replace = $transport->xpdo->getOption('install_replace', $options, $enduser_install_action_default);
+            //$enduser_option_merge = $transport->xpdo->getOption('enduser_option_merge', $options, 'false');
 
-            $replace = ($enduser_option_merge != 'true' && $enduser_install_action_default == 'replace') || $enduser_selected_option_replace == 'true';
+            //$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] options: " . print_r($options, true));
+            //$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] enduser_install_action_default: $enduser_install_action_default");
+            //$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] enduser_selected_option_replace: $enduser_selected_option_replace");
+
+            $replace = $enduser_selected_option_replace == 'replace';
 
             if ($replace && isset($fileMeta['classes'])) {
                 $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Replace indicated, truncating tables...");
@@ -54,7 +56,7 @@ if ($transport && $transport->xpdo) {
                     $results[$class] = $transport->xpdo->exec('TRUNCATE TABLE ' . $transport->xpdo->getTableName($class));
                 }
             }
-            $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Table truncation results: " . print_r($results, true));
+            $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Finished truncating tables.");
 
             break;
     }

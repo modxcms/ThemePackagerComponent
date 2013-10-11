@@ -195,9 +195,11 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                     'sources.modMediaSourceContext'
                 );
             }
-            if ($everything) {
-                $classesToTruncate = $classes;
-            } else {
+
+            // it's not a *real* everything
+            //if ($everything) {
+            //    $classesToTruncate = $classes;
+            //} else {
                 $classesToTruncate = array(
                     'modChunk',
                     'modCategory',
@@ -213,7 +215,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                     'modTemplateVarResource',
                     'modTemplateVarResourceGroup',
                 );
-            }
+            //}
 
             // @todo decide if any of Vapor's default web-root directory file additions should be included
 
@@ -269,14 +271,14 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                     'validate' => array(
                         array(
                             'type' => 'php',
-                            'source' => VAPOR_DIR . 'includes/scripts/validate.truncate_tables.php',
+                            'source' => VAPOR_DIR . 'includes/validators/validate.truncate_tables.php',
                             'classes' => $classesToTruncate
                         ),
                     ),
                     'resolve' => array(
                         array(
                             'type' => 'php',
-                            'source' => VAPOR_DIR . 'includes/scripts/resolve.vapor_model.php'
+                            'source' => VAPOR_DIR . 'includes/resolvers/resolve.vapor_model.php'
                         )
                     )
                 )
@@ -327,7 +329,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         'resolve' => array(
                             array(
                                 'type' => 'php',
-                                'source' => VAPOR_DIR . 'includes/scripts/resolve.extension_packages.php'
+                                'source' => VAPOR_DIR . 'includes/resolvers/resolve.extension_packages.php'
                             ),
                         )
                     )
@@ -441,9 +443,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
 
                     case 'modResource':
 
-                        if ($everything) {
-                            continue 1;
-                        } elseif (is_array($resources) && count($resources) > 0) {
+                        if ($everything || (is_array($resources) && count($resources))) {
                             $classAttributes['unique_key'] = 'pagetitle';
                             $classAttributes['related_objects'] = true;
                             $classAttributes['related_object_attributes'] = array(
@@ -460,19 +460,27 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                                         )
                                     )
                                 ),
-                                'Templates'=> array(
+                                'Template'=> array(
                                     'preserve_keys'=> false,
                                     'update_object'=> false,
                                     'unique_key'=> 'templatename'
                                 )
                             );
-                            $classCriteria = array(
-                                'modResource.id:IN'=> $resources
+                            $classAttributes['validate'] = array(
+                                array(
+                                    'type' => 'php',
+                                    'source' => VAPOR_DIR . 'includes/validators/validate.resource.php',
+                                ),
                             );
+                            if (!$everything) {
+                                $classCriteria = array(
+                                    'modResource.id:IN'=> $resources
+                                );
+                            }
                             $instances = 0;
                             $Resources = $modx->getIterator('modResource', $classCriteria);
                             foreach ($Resources as $object) {
-                                $object->getGraph('{"TemplateVarResources":{"TemplateVar":{}}, "Templates":{}}');
+                                $object->getGraph('{"TemplateVarResources":{"TemplateVar":{}}, "Template":{}}');
                                 if ($package->put($object, $classAttributes)) {
                                     $instances++;
                                 } else {
@@ -538,6 +546,17 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                                 '{metadata}',
                             );
 
+                            if ($packageList === true) {
+                                $packageList = array();
+                                $Packages = $modx->getIterator('transport.modTransportPackage');
+                                if ($Packages) {
+                                    foreach ($Packages as $Package) {
+                                        if ($Package->get('package_name') == 'themepackagercomponent') continue;
+                                        $packageList[] = $Package->toArray();
+                                    }
+                                }
+
+                            }
                             foreach ($packageList as $packageData) {
                                 $file = $packageDir.$packageData['signature'].'.transport.zip';
                                 if (!file_exists($file)) continue;
@@ -560,7 +579,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
 
                                 /* create custom package validator to resolve if the package on the client server is newer than this version */
                                 $cacheKey = 'themepackagercomponent/validators/'.$packageData['signature'].'.php';
-                                $validator = file_get_contents($modx->tp->config['includesPath'].'validate.subpackage.php');
+                                $validator = file_get_contents($modx->tp->config['includesPath'].'validators/validate.subpackage.php');
                                 $validator = str_replace($spReplaces,array(
                                     $sig[1].(!empty($sig[2]) ? '-'.$sig[2] : ''),
                                     $vsig[0],
@@ -575,7 +594,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
 
                                 /* add resolver to subpackage to add to packages grid */
                                 $cacheKey = 'themepackagercomponent/resolvers/'.$packageData['signature'].'.php';
-                                $resolver = file_get_contents($modx->tp->config['includesPath'].'resolve.subpackage.php');
+                                $resolver = file_get_contents($modx->tp->config['includesPath'].'resolvers/resolve.subpackage.php');
                                 $resolver = str_replace($resolverReplaces,array(
                                     $packageData['signature'],
                                     $subpackage->get('provider'),
@@ -596,54 +615,54 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         $modx->log(modX::LOG_LEVEL_INFO, "Packaged {$instances} of {$class}");
                         continue 2;
                     case 'sources.modMediaSource':
-                        if (!$everything) {
+                        //if (!$everything) {
                             continue 2;
-                        }
-                        foreach ($modx->getIterator('sources.modMediaSource') as $object) {
-                            $classAttributes = $attributes;
-                            /** @var modMediaSource $object */
-                            if ($object->get('is_stream') && $object->initialize()) {
-                                $sourceBases = $object->getBases('');
-                                $source = $object->getBasePath();
-                                if (!$sourceBases['pathIsRelative'] && strpos($source, '://') === false) {
-                                    $sourceBasePath = $source;
-                                    if (strpos($source, $base_path) === 0) {
-                                        $sourceBasePath = str_replace($base_path, '', $sourceBasePath);
-                                        $classAttributes['resolve'][] = array(
-                                            'type' => 'php',
-                                            'source' => VAPOR_DIR . 'includes/scripts/resolve.media_source.php',
-                                            'target' => $sourceBasePath,
-                                            'targetRelative' => true
-                                        );
-                                    } else {
-                                        /* when coming from Windows sources, remove "{volume}:" */
-                                        if (strpos($source, ':\\') !== false || strpos($source, ':/') !== false) {
-                                            $sourceBasePath = str_replace('\\', '/', substr($source, strpos($source, ':') + 1));
-                                        }
-                                        $target = 'dirname(MODX_BASE_PATH) . "/sources/' . ltrim(dirname($sourceBasePath), '/') . '/"';
-                                        $classAttributes['resolve'][] = array(
-                                            'type' => 'file',
-                                            'source' => $source,
-                                            'target' => "return {$target};"
-                                        );
-                                        $classAttributes['resolve'][] = array(
-                                            'type' => 'php',
-                                            'source' => VAPOR_DIR . 'includes/scripts/resolve.media_source.php',
-                                            'target' => $sourceBasePath,
-                                            'targetRelative' => false,
-                                            'targetPrepend' => "return dirname(MODX_BASE_PATH) . '/sources/';"
-                                        );
-                                    }
-                                }
-                            }
-                            if ($package->put($object, $classAttributes)) {
-                                $instances++;
-                            } else {
-                                $modx->log(modX::LOG_LEVEL_WARN, "Could not package {$class} instance with pk: " . print_r($object->getPrimaryKey()));
-                            }
-                        }
-                        $modx->log(modX::LOG_LEVEL_INFO, "Packaged {$instances} of {$class}");
-                        continue 2;
+                        //}
+//                        foreach ($modx->getIterator('sources.modMediaSource') as $object) {
+//                            $classAttributes = $attributes;
+//                            /** @var modMediaSource $object */
+//                            if ($object->get('is_stream') && $object->initialize()) {
+//                                $sourceBases = $object->getBases('');
+//                                $source = $object->getBasePath();
+//                                if (!$sourceBases['pathIsRelative'] && strpos($source, '://') === false) {
+//                                    $sourceBasePath = $source;
+//                                    if (strpos($source, $base_path) === 0) {
+//                                        $sourceBasePath = str_replace($base_path, '', $sourceBasePath);
+//                                        $classAttributes['resolve'][] = array(
+//                                            'type' => 'php',
+//                                            'source' => VAPOR_DIR . 'includes/resolvers/resolve.media_source.php',
+//                                            'target' => $sourceBasePath,
+//                                            'targetRelative' => true
+//                                        );
+//                                    } else {
+//                                        /* when coming from Windows sources, remove "{volume}:" */
+//                                        if (strpos($source, ':\\') !== false || strpos($source, ':/') !== false) {
+//                                            $sourceBasePath = str_replace('\\', '/', substr($source, strpos($source, ':') + 1));
+//                                        }
+//                                        $target = 'dirname(MODX_BASE_PATH) . "/sources/' . ltrim(dirname($sourceBasePath), '/') . '/"';
+//                                        $classAttributes['resolve'][] = array(
+//                                            'type' => 'file',
+//                                            'source' => $source,
+//                                            'target' => "return {$target};"
+//                                        );
+//                                        $classAttributes['resolve'][] = array(
+//                                            'type' => 'php',
+//                                            'source' => VAPOR_DIR . 'includes/resolvers/resolve.media_source.php',
+//                                            'target' => $sourceBasePath,
+//                                            'targetRelative' => false,
+//                                            'targetPrepend' => "return dirname(MODX_BASE_PATH) . '/sources/';"
+//                                        );
+//                                    }
+//                                }
+//                            }
+//                            if ($package->put($object, $classAttributes)) {
+//                                $instances++;
+//                            } else {
+//                                $modx->log(modX::LOG_LEVEL_WARN, "Could not package {$class} instance with pk: " . print_r($object->getPrimaryKey()));
+//                            }
+//                        }
+//                        $modx->log(modX::LOG_LEVEL_INFO, "Packaged {$instances} of {$class}");
+//                        continue 2;
                     default:
                         if (!$everything) {
                             // skip everything else
@@ -773,6 +792,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
             $packageAttributes['enduser_option_merge'] = $this->parameters['enduser_option_merge'];
             $packageAttributes['enduser_install_action_default'] = $this->parameters['enduser_install_action_default'];
             $packageAttributes['enduser_option_samplecontent'] = $this->parameters['enduser_option_samplecontent'];
+            $packageAttributes['enduser_install_samplecontent_default'] = $this->parameters['enduser_install_samplecontent_default'];
 
             $builder->setPackageAttributes($packageAttributes);
             $modx->log(modX::LOG_LEVEL_INFO,'Packaged in package attributes.'); flush();
