@@ -32,15 +32,31 @@
  */
 $results = array();
 
-$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, '[truncate] $options: ' . print_r($options, true));
+if ($transport && $transport->xpdo) {
+    switch ($options[xPDOTransport::PACKAGE_ACTION]) {
+        case xPDOTransport::ACTION_INSTALL:
+        case xPDOTransport::ACTION_UPGRADE:
 
-$userOptionReplace = array_key_exists('install_replace', $options) && $options['install_replace'] == 'true';
+            $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, '[truncate] $options: ' . print_r($options, true));
 
-if ($userOptionReplace && isset($fileMeta['classes'])) {
-    $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Replace indicated, truncating tables...");
-    foreach ($fileMeta['classes'] as $class) {
-        $results[$class] = $transport->xpdo->exec('TRUNCATE TABLE ' . $transport->xpdo->getTableName($class));
+            $enduser_selected_option_replace = $transport->xpdo->getOption('install_replace', $options, 'false');
+            $enduser_option_merge = $transport->xpdo->getOption('enduser_option_merge', $options, 'false');
+            $enduser_install_action_default = $transport->xpdo->getOption('enduser_install_action_default', $options, 'merge');
+
+            $replace = ($enduser_option_merge != 'true' && $enduser_install_action_default == 'replace') || $enduser_selected_option_replace == 'true';
+
+            if ($replace && isset($fileMeta['classes'])) {
+                $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Replace indicated, truncating tables...");
+                foreach ($fileMeta['classes'] as $class) {
+                    if (strpos($class, 'modUser') !== false || in_array($class, array())) {
+                        continue;
+                    }
+                    $results[$class] = $transport->xpdo->exec('TRUNCATE TABLE ' . $transport->xpdo->getTableName($class));
+                }
+            }
+            $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Table truncation results: " . print_r($results, true));
+
+            break;
     }
 }
-$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Table truncation results: " . print_r($results, true));
 return !array_search(false, $results, true);

@@ -80,8 +80,6 @@ TP.panel.Home = function(config) {
                                 if (checked) {
                                     Ext.getCmp('tpc-tab-templates').disable();
                                     Ext.getCmp('tpc-tab-chunks').disable();
-                                    Ext.getCmp('tpc-tab-snippets').disable();
-                                    Ext.getCmp('tpc-tab-plugins').disable();
                                     Ext.getCmp('tpc-tab-subpackages').disable();
                                     Ext.getCmp('tpc-tab-directories').disable();
                                     Ext.getCmp('tpc-tab-resources').disable();
@@ -89,8 +87,6 @@ TP.panel.Home = function(config) {
                                 } else {
                                     Ext.getCmp('tpc-tab-templates').enable();
                                     Ext.getCmp('tpc-tab-chunks').enable();
-                                    Ext.getCmp('tpc-tab-snippets').enable();
-                                    Ext.getCmp('tpc-tab-plugins').enable();
                                     Ext.getCmp('tpc-tab-subpackages').enable();
                                     Ext.getCmp('tpc-tab-directories').enable();
                                     Ext.getCmp('tpc-tab-resources').enable();
@@ -173,10 +169,10 @@ TP.panel.Home = function(config) {
                 title: _('themepackagercomponent.templates')
                 ,id: 'tpc-tab-templates'
                 ,disabled: true
+                ,defaults: { border: false ,autoHeight: true }
                 ,items: [
                     {
                         html: _('themepackagercomponent.templates.intro_msg')
-                        ,border: false
                     },{
                         xtype: 'hidden'
                         ,id: 'tp-tree-templates-selected_ids'
@@ -205,12 +201,11 @@ TP.panel.Home = function(config) {
                 title: _('themepackagercomponent.chunks')
                 ,id: 'tpc-tab-chunks'
                 ,disabled: true
+                ,defaults: { border: false ,autoHeight: true }
                 ,items: [
                     {
                         html: _('themepackagercomponent.chunks.intro_msg')
-                        ,border: false
-                    }
-                    ,{
+                    },{
                         xtype: 'hidden'
                         ,id: 'tp-tree-chunks-selected_ids'
                         ,name: 'tp_chunk_ids'
@@ -235,36 +230,12 @@ TP.panel.Home = function(config) {
                     }
                 ]
             },{
-                title: _('themepackagercomponent.snippets_custom')
-                ,id: 'tpc-tab-snippets'
-                ,disabled: true
-                ,items: [{
-                    html: _('themepackagercomponent.snippets.intro_msg')
-                    ,border: false
-                },{
-                    xtype: 'tp-grid-snippets'
-                    ,id: 'tp-grid-snippets'
-                    ,preventRender: true
-                }]
-            },{
-                title: _('themepackagercomponent.plugins')
-                ,id: 'tpc-tab-plugins'
-                ,disabled: true
-                ,items: [{
-                    html: _('themepackagercomponent.plugins.intro_msg')
-                    ,border: false
-                },{
-                    xtype: 'tp-grid-plugins'
-                    ,id: 'tp-grid-plugins'
-                    ,preventRender: true
-                }]
-            },{
                 title: _('themepackagercomponent.subpackages')
                 ,id: 'tpc-tab-subpackages'
                 ,disabled: true
+                ,defaults: { border: false ,autoHeight: true }
                 ,items: [{
                     html: _('themepackagercomponent.subpackages.intro_msg')
-                    ,border: false
                 },{
                     xtype: 'tp-grid-packages'
                     ,id: 'tp-grid-packages'
@@ -274,9 +245,9 @@ TP.panel.Home = function(config) {
                 title: _('themepackagercomponent.directories')
                 ,id: 'tpc-tab-directories'
                 ,disabled: true
+                ,defaults: { border: false ,autoHeight: true }
                 ,items: [{
                     html: _('themepackagercomponent.directories.intro_msg')
-                    ,border: false
                 },{
                     xtype: 'tp-grid-directories'
                     ,id: 'tp-grid-directories'
@@ -285,9 +256,25 @@ TP.panel.Home = function(config) {
             },{
                 title: _('themepackagercomponent.resources')
                 ,id: 'tpc-tab-resources'
+                ,layout: 'form'
+                ,labelWidth: 200
                 ,disabled: true
+                ,defaults: { border: false ,autoHeight: true }
                 ,items: [{
                     html: _('themepackagercomponent.resources.intro_msg')
+                    ,style: {
+                        marginBottom: '20px'
+                    }
+                },{
+                    xtype: 'textfield'
+                    ,fieldLabel: _('themepackagercomponent.resources_field')
+                    ,description: _('themepackagercomponent.resources_field_desc')
+                    ,name: 'resources'
+                    ,id: 'tp-resource-list'
+                    ,value: ''
+                    ,regex: /^[0-9]+\s*(,\s*[0-9]+\s*)*$/
+                    ,regexText: _('themepackagercomponent.resources_field_invalid')
+                    ,msgTarget: 'under'
                 }]
             }]
         }]
@@ -302,9 +289,7 @@ Ext.extend(TP.panel.Home,MODx.FormPanel,{
     beforeSubmit: function(o) {
         Ext.apply(o.form.baseParams,{
             templates: Ext.getCmp('tp-tree-templates-selected_ids').getValue()
-            ,snippets: Ext.getCmp('tp-grid-snippets').encode()
             ,chunks: Ext.getCmp('tp-tree-chunks-selected_ids').getValue()
-            ,plugins: Ext.getCmp('tp-grid-plugins').encode()
             ,packages: Ext.getCmp('tp-grid-packages').encode()
             ,directories: Ext.getCmp('tp-grid-directories').encode()
         });
@@ -314,9 +299,6 @@ Ext.extend(TP.panel.Home,MODx.FormPanel,{
             var name = o.result.message;
 
             Ext.getCmp('tp-btn-export').setDisabled(false);
-            //Ext.getCmp('tp-grid-templates').getStore().commitChanges();
-            Ext.getCmp('tp-grid-snippets').getStore().commitChanges();
-            Ext.getCmp('tp-grid-plugins').getStore().commitChanges();
             Ext.getCmp('tp-grid-packages').getStore().commitChanges();
             Ext.getCmp('tp-grid-directories').getStore().commitChanges();
             

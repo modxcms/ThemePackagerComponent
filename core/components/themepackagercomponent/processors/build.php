@@ -70,7 +70,7 @@ $name = str_replace(array(' ','-','.','*','!','@','#','$','%','^','&','_'),'',$n
 $name_lower = strtolower($name);
 
 /* define file paths and string replacements */
-$directories = array();
+$directories = $_POST['directories'];
 $cachePath = $modx->getOption('core_path').'cache/';
 $pathLookups = array(
     'sources' => array(
