@@ -34,3 +34,13 @@ var TP = new TP();
         return rs;
     }
  });
+
+TP.tree.LocalTree = function (config) {
+    config = config || {};
+    TP.tree.LocalTree.superclass.constructor.call(this, config);
+};
+Ext.extend(TP.tree.LocalTree,Ext.tree.TreePanel,{
+    getData: function() {
+        return this.getChecked('id');
+    }
+});

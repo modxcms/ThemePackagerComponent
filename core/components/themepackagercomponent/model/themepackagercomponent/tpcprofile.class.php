@@ -2,5 +2,4 @@
 /**
  * @package themepackagercomponent
  */
-class pacProfile extends xPDOSimpleObject {}
-?>
+class tpcProfile extends xPDOSimpleObject {}

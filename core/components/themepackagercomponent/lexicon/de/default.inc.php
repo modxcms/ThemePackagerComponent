@@ -33,11 +33,7 @@
 $_lang['themepackagercomponent'] = 'ThemePackagerComponent';
 $_lang['themepackagercomponent.export'] = 'Export';
 $_lang['themepackagercomponent.intro_msg'] = 'Um ein Transport Package für Ihr Template zu erstellen, wählen Sie unten einfach das Template aus der Liste aus. Geben Sie dann den Namen des Verzeichnisses ein, das die Dateien enthält, die mit in das Template-Package übernommen werden sollen (z. B. mytemplate/). <i>Dieses Verzeichnis muss sich innerhalb des Verzeichnisses modx/assets/templates/ befinden.</i> Sie können dann optional eine Readme- und/oder Lizenzdatei angeben, die in das Package aufgenommen werden soll. Abschließend geben Sie die Versionsnummer und das Release dieses Template-Transport-Packages ein.';
-$_lang['themepackagercomponent.license'] = 'Lizenz-Datei';
-$_lang['themepackagercomponent.license_desc'] = 'Eine Lizenz, der Benutzer während der Installation zustimmen müssen. Optional.';
 $_lang['themepackagercomponent.menu_desc'] = 'Ein Werkzeug zum Erstellen von Template-Packages.';
-$_lang['themepackagercomponent.readme'] = 'Readme-Datei';
-$_lang['themepackagercomponent.readme_desc'] = 'Eine Readme-Datei, die während der Installation angezeigt wird. Optional.';
 $_lang['themepackagercomponent.release'] = 'Release';
 $_lang['themepackagercomponent.release_err_nf'] = 'Bitte geben Sie ein Release an.';
 $_lang['themepackagercomponent.template_err_ns'] = 'Template nicht angegeben!';

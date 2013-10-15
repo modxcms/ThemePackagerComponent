@@ -19,7 +19,6 @@ class tpGetTreeProcessor extends modObjectGetListProcessor {
                 if (!array_key_exists($this->categoryAlias, $Category)) {
                     $Category->{$this->categoryAlias} = array();
                 }
-                $Category->{$this->categoryAlias}[] = $Element;
                 if (!array_key_exists($cat_id, $Categories)) {
                     $Categories[$cat_id] = $Category;
                 }

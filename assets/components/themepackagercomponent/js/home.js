@@ -101,12 +101,14 @@ Ext.extend(TP.page.Home,MODx.Component,{
     ,resetProfile: function(rc) {
         rc = rc || false;
         Ext.getCmp('tp-panel-home').getForm().reset();
+        Ext.getCmp('tpc-package-everything-checkbox').setValue(false);
+        Ext.getCmp('tpc-enduser_option_merge-checkbox').setValue(false);
+        Ext.getCmp('tpc-enduser-option-samplecontent').setValue(false);
         Ext.getCmp('tp-home-header').update('<h2>'+_('themepackagercomponent')+'</h2>');
-
-        Ext.getCmp('tp-grid-templates').store.removeAll();
-        Ext.getCmp('tp-grid-chunks').store.removeAll();
-        Ext.getCmp('tp-grid-snippets').store.removeAll();
-        Ext.getCmp('tp-grid-plugins').store.removeAll();
+        Ext.getCmp('tp-tree-templates-panel').getRootNode().cascade(function(n){n.getUI().toggleCheck(false)});
+        Ext.getCmp('tp-tree-chunks-panel').getRootNode().cascade(function(n){n.getUI().toggleCheck(false)});
+        Ext.getCmp('tp-tree-plugins-panel').getRootNode().cascade(function(n){n.getUI().toggleCheck(false)});
+        Ext.getCmp('tp-tree-snippets-panel').getRootNode().cascade(function(n){n.getUI().toggleCheck(false)});
         Ext.getCmp('tp-grid-packages').store.removeAll();
         Ext.getCmp('tp-grid-directories').store.removeAll();
         TP.profileLoaded = 0;
@@ -123,10 +125,10 @@ Ext.extend(TP.page.Home,MODx.Component,{
     ,prepareProfile: function() {
         var vs = {};
         vs.info = Ext.getCmp('tp-panel-home').getForm().getValues();
-        vs.templates = Ext.getCmp('tp-grid-templates').getData();
-        vs.chunks = Ext.getCmp('tp-grid-chunks').getData();
-        vs.snippets = Ext.getCmp('tp-grid-snippets').getData();
-        vs.plugins = Ext.getCmp('tp-grid-plugins').getData();
+        vs.templates = Ext.getCmp('tp-tree-templates-panel').getData();
+        vs.chunks = Ext.getCmp('tp-tree-chunks-panel').getData();
+        vs.plugins = Ext.getCmp('tp-tree-plugins-panel').getData();
+        vs.snippets = Ext.getCmp('tp-tree-snippets-panel').getData();
         vs.packages = Ext.getCmp('tp-grid-packages').getData();
         vs.directories = Ext.getCmp('tp-grid-directories').getData();
         return Ext.util.JSON.encode(vs);
@@ -181,25 +183,39 @@ Ext.extend(TP.page.Home,MODx.Component,{
                     this.switchProfile(v,r.object.name);
 
 
-                    if (r.object.templates) {
-                        d = Ext.decode(r.object.templates);
-                        Ext.getCmp('tp-grid-templates').getStore().loadData(d);
+                    if (r.object.data.templates) {
+                        Ext.getCmp('tp-tree-templates-selected_ids').setValue(r.object.data.templates.join());
+                        Ext.each(r.object.data.templates, function(n){
+                            Ext.getCmp('tp-tree-templates-panel').getNodeById(n).ui.checkbox.checked = true;
+                            Ext.getCmp('tp-tree-templates-panel').getNodeById(n).attributes.checked = true;
+                        });
+                        Ext.getCmp('tp-tree-templates-panel').updateSelected();
+                    }
+                    if (r.object.data.chunks) {
+                        Ext.getCmp('tp-tree-chunks-selected_ids').setValue(r.object.data.chunks.join());
+                        Ext.each(r.object.data.chunks, function(n){
+                            Ext.getCmp('tp-tree-chunks-panel').getNodeById(n).ui.checkbox.checked = true;
+                            Ext.getCmp('tp-tree-chunks-panel').getNodeById(n).attributes.checked = true;
+                        });
+                        Ext.getCmp('tp-tree-chunks-panel').updateSelected();
+                    }
+                    if (r.object.data.plugins) {
+                        Ext.getCmp('tp-tree-plugins-selected_ids').setValue(r.object.data.plugins.join());
+                        Ext.each(r.object.data.plugins, function(n){
+                            Ext.getCmp('tp-tree-plugins-panel').getNodeById(n).ui.checkbox.checked = true;
+                            Ext.getCmp('tp-tree-plugins-panel').getNodeById(n).attributes.checked = true;
+                        });
+                        Ext.getCmp('tp-tree-plugins-panel').updateSelected();
+                    }
+                    if (r.object.data.snippets) {
+                        Ext.getCmp('tp-tree-snippets-selected_ids').setValue(r.object.data.snippets.join());
+                        Ext.each(r.object.data.snippets, function(n){
+                            Ext.getCmp('tp-tree-snippets-panel').getNodeById(n).ui.checkbox.checked = true;
+                            Ext.getCmp('tp-tree-snippets-panel').getNodeById(n).attributes.checked = true;
+                        });
+                        Ext.getCmp('tp-tree-snippets-panel').updateSelected();
                     }
 
-                    if (r.object.chunks) {
-                        d = Ext.decode(r.object.chunks);
-                        Ext.getCmp('tp-grid-chunks').getStore().loadData(d);
-                    }
-
-                    if (r.object.snippets) {
-                        d = Ext.decode(r.object.snippets);
-                        Ext.getCmp('tp-grid-snippets').getStore().loadData(d);
-                    }
-
-                    if (r.object.plugins) {
-                        d = Ext.decode(r.object.plugins);
-                        Ext.getCmp('tp-grid-plugins').getStore().loadData(d);
-                    }
 
                     if (r.object.packages) {
                         d = Ext.decode(r.object.packages);
@@ -210,6 +226,15 @@ Ext.extend(TP.page.Home,MODx.Component,{
                         d = Ext.decode(r.object.directories);
                         Ext.getCmp('tp-grid-directories').getStore().loadData(d);
                     }
+
+                    if (r.object.data.info.rootFiles) {
+                        Ext.each(r.object.data.info.rootFiles, function(f) {
+                            cb = Ext.getCmp('rootfile-' + f.replace(' ', '_'));
+                            if (cb) {
+                                cb.setValue(true);
+                            }
+                        });
+                    };
 
                 },scope:this}
             }

@@ -16,7 +16,7 @@ TP.tree.Templates = function(config) {
     );
     TP.tree.Templates.superclass.constructor.call(this,config);
 }
-Ext.extend(TP.tree.Templates,Ext.tree.TreePanel,{
+Ext.extend(TP.tree.Templates,TP.tree.LocalTree,{
     updateSelected: function() {
         var selected = [];
         Ext.each(this.getChecked('id'), function(el){

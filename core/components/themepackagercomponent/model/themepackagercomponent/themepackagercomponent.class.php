@@ -69,8 +69,19 @@ class ThemePackagerComponent {
      * @return string The output HTML
      */
     public function initialize() {
-        $viewHeader = include $this->config['controllersPath'].'mgr/header.php';
 
+        // get non-core files in root
+        $root_files = array();
+        if ($root_scan = scandir(MODX_BASE_PATH)) {
+            foreach ($root_scan as $root_file) {
+                if (!in_array($root_file, array('readme.txt', 'license.txt', 'changelog.txt', 'core', 'assets', 'connectors', 'manager', 'index.php', 'ht.access', 'config.core.php', 'robots.txt')) && $root_file[0] !== '.') {
+                    $root_files[] = $root_file;
+                }
+            }
+        }
+        $this->config['rootFiles'] = $root_files;
+
+        $viewHeader = include $this->config['controllersPath'].'mgr/header.php';
         $this->modx->regClientCSS($this->config['cssUrl'].'mgr.css');
 
         $f = $this->config['controllersPath'].'mgr/home.php';

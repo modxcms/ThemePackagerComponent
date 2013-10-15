@@ -15,7 +15,7 @@ if ($object->xpdo) {
 
             $manager = $modx->getManager();
             $modx->setLogLevel(modX::LOG_LEVEL_ERROR);
-            $manager->createObjectContainer('pacProfile');
+            $manager->createObjectContainer('tpcProfile');
             $modx->setLogLevel(modX::LOG_LEVEL_INFO);
             break;
     }

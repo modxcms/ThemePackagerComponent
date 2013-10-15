@@ -8,10 +8,10 @@
 if (empty($scriptProperties['name'])) {
     return $modx->error->failure($modx->lexicon('themepackagercomponent.profile_err_ns_name'));
 }
-$profile = $modx->getObject('pacProfile',array('name' => $scriptProperties['name']));
+$profile = $modx->getObject('tpcProfile',array('name' => $scriptProperties['name']));
 if ($profile) return $modx->error->failure($modx->lexicon('themepackagercomponent.profile_err_ae'));
 
-$profile = $modx->newObject('pacProfile');
+$profile = $modx->newObject('tpcProfile');
 $profile->fromArray($scriptProperties);
 
 $data = $modx->fromJSON($_POST['data']);

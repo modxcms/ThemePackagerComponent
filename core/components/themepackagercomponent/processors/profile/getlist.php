@@ -14,11 +14,11 @@ $sort = $modx->getOption('sort',$scriptProperties,'name');
 $dir = $modx->getOption('dir',$scriptProperties,'ASC');
 
 /* query for chunks */
-$c = $modx->newQuery('pacProfile');
-$count = $modx->getCount('pacProfile');
+$c = $modx->newQuery('tpcProfile');
+$count = $modx->getCount('tpcProfile');
 $c->sortby($sort,$dir);
 if ($isLimit) $c->limit($limit,$start);
-$profiles = $modx->getCollection('pacProfile',$c);
+$profiles = $modx->getCollection('tpcProfile',$c);
 
 /* iterate through profiles */
 $list = array();

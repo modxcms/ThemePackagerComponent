@@ -1,10 +1,10 @@
-TP.tree.Chunks = function(config) {
+TP.tree.Snippets = function(config) {
     config = config || {};
     Ext.applyIf(
         config,
         {
-            id: 'tp-tree-chunks'
-            ,dataUrl: TP.config.connector_url + '?action=chunk/getTree'
+            id: 'tp-tree-snippets'
+            ,dataUrl: TP.config.connector_url + '?action=snippet/getTree'
             ,fields: ['id','name']
             ,data: []
             ,border: false
@@ -14,20 +14,20 @@ TP.tree.Chunks = function(config) {
             }
         }
     );
-    TP.tree.Chunks.superclass.constructor.call(this,config);
+    TP.tree.Snippets.superclass.constructor.call(this,config);
 }
-Ext.extend(TP.tree.Chunks,TP.tree.LocalTree,{
+Ext.extend(TP.tree.Snippets,TP.tree.LocalTree,{
     updateSelected: function() {
         var selected = [];
         Ext.each(this.getChecked('id'), function(el){
-            ma = el.match(/^n_chunk_(\d+)$/);
+            ma = el.match(/^n_snippet_(\d+)$/);
             if (ma != null && ma.length == 2) {
                 selected.push(ma[1]);
             }
         });
-        Ext.getCmp('tp-tree-chunks-selected_ids').setValue(selected.join(','));
+        Ext.getCmp('tp-tree-snippets-selected_ids').setValue(selected.join(','));
         return true;
     }
 });
 
-Ext.reg('tp-tree-chunks',TP.tree.Chunks);
+Ext.reg('tp-tree-snippets',TP.tree.Snippets);

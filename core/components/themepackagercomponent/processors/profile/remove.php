@@ -6,7 +6,7 @@
  * @subpackage processors
  */
 if (empty($scriptProperties['id'])) return $modx->error->failure($modx->lexicon('themepackagercomponent.profile_err_ns'));
-$profile = $modx->getObject('pacProfile',$scriptProperties['id']);
+$profile = $modx->getObject('tpcProfile',$scriptProperties['id']);
 if (empty($profile)) return $modx->error->failure($modx->lexicon('themepackagercomponent.profile_err_nf'));
 
 if ($profile->remove() === false) {

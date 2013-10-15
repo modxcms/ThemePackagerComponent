@@ -1,5 +1,29 @@
 TP.panel.Home = function(config) {
     config = config || {};
+
+    // create site root file checkboxen
+    var fs = {};
+    if(TP.config.rootFiles) {
+        var items = [];
+        items.push({
+            border: false
+            ,html: '<p>Pick any files from your site root that you wish to be included in your Theme.</p>'
+        });
+        Ext.each(TP.config.rootFiles, function(f){
+            items.push({
+                xtype: 'checkbox'
+                ,id: 'rootfile-' + f.replace(' ', '_')
+                ,name: 'rootFiles[]'
+                ,boxLabel: f
+                ,inputValue: f
+            });
+        });
+        fs = {
+            xtype: 'fieldset'
+            ,items: items
+        }
+    }
+
     Ext.apply(config,{
         id: 'tp-panel-home'
         ,url: TP.config.connector_url
@@ -18,6 +42,7 @@ TP.panel.Home = function(config) {
             xtype: 'modx-tabs'
             ,border: true
             ,autoDestroy: false
+            ,deferredRender: false
             ,defaults: { border: false ,autoHeight: true, bodyStyle: 'padding: 15px;' }
             ,items: [{
                 title: _('themepackagercomponent.package')
@@ -36,27 +61,6 @@ TP.panel.Home = function(config) {
                     ,value: _('themepackagercomponent.mypackage')
                 },{
                     xtype: 'textfield'
-                    ,inputType: 'file'
-                    ,name: 'readme'
-                    ,fieldLabel: _('themepackagercomponent.readme')
-                    ,description: _('themepackagercomponent.readme_desc')
-                    ,width: 300
-                },{
-                    xtype: 'textfield'
-                    ,inputType: 'file'
-                    ,name: 'license'
-                    ,fieldLabel: _('themepackagercomponent.license')
-                    ,description: _('themepackagercomponent.license_desc')
-                    ,width: 300
-                },{
-                    xtype: 'textfield'
-                    ,inputType: 'file'
-                    ,name: 'changelog'
-                    ,fieldLabel: _('themepackagercomponent.changelog')
-                    ,description: _('themepackagercomponent.changelog_desc')
-                    ,width: 300
-                },{
-                    xtype: 'textfield'
                     ,name: 'version'
                     ,fieldLabel: _('themepackagercomponent.version')
                     ,description: _('themepackagercomponent.version_desc')
@@ -69,11 +73,12 @@ TP.panel.Home = function(config) {
                     ,value: 'beta1'
                 },{
                     xtype: 'checkbox'
+                    ,id: 'tpc-package-everything-checkbox'
                     ,name: 'everything'
                     ,fieldLabel: _('themepackagercomponent.everything')
                     ,description: _('themepackagercomponent.everything_desc')
                     ,inputValue: 'yes'
-                    ,checked: true
+                    ,checked: false
                     ,listeners: {
                         check: {
                             fn: function (el, checked) {
@@ -109,6 +114,7 @@ TP.panel.Home = function(config) {
                             html: _('themepackagercomponent.enduser_option_desc')
                         },{
                             xtype: 'checkbox'
+                            ,id: 'tpc-enduser_option_merge-checkbox'
                             ,name: 'enduser_option_merge'
                             ,fieldLabel: _('themepackagercomponent.enduser_option_merge_label')
                             ,description: _('themepackagercomponent.enduser_option_merge_desc')
@@ -188,11 +194,34 @@ TP.panel.Home = function(config) {
                             ]
                         }
                     ]
+                },{
+                    xtype: 'fieldset'
+                    ,id: 'tpc-fieldset-advanced'
+                    ,title: _('themepackagercomponent.advanced_title')
+                    ,autoHeight: true
+                    ,columnWidth: 0.5
+                    ,collapsible: true
+                    ,collapsed: true
+                    ,titleCollapse: true
+                    ,defaults: { border: false ,autoHeight: true }
+                    ,items: [
+                        {
+                            xtype: 'textfield'
+                            ,id: 'tpc-advanced-settings'
+                            ,name: 'settings'
+                            ,grow: true
+                            ,growMin: 250
+                            ,growMax: 1000
+                            ,fieldLabel: _('themepackagercomponent.advanced.settings')
+                            ,description: _('themepackagercomponent.advanced.settings_desc')
+                        }
+                    ]
                 }]
             },{
                 title: _('themepackagercomponent.templates')
                 ,id: 'tpc-tab-templates'
-                ,disabled: true
+                ,disabled: false
+                ,deferredRender: false
                 ,defaults: { border: false ,autoHeight: true }
                 ,items: [
                     {
@@ -205,7 +234,6 @@ TP.panel.Home = function(config) {
                     },{
                         xtype: 'tp-tree-templates'
                         ,id: 'tp-tree-templates-panel'
-                        ,preventRender: true
                         ,listeners: {
                             checkchange: function(el,checked) {
                                 if (el.childNodes.length > 0) {
@@ -224,7 +252,7 @@ TP.panel.Home = function(config) {
             },{
                 title: _('themepackagercomponent.chunks')
                 ,id: 'tpc-tab-chunks'
-                ,disabled: true
+                ,disabled: false
                 ,defaults: { border: false ,autoHeight: true }
                 ,items: [
                     {
@@ -256,7 +284,7 @@ TP.panel.Home = function(config) {
             },{
                 title: _('themepackagercomponent.subpackages')
                 ,id: 'tpc-tab-subpackages'
-                ,disabled: true
+                ,disabled: false
                 ,defaults: { border: false ,autoHeight: true }
                 ,items: [{
                     html: _('themepackagercomponent.subpackages.intro_msg')
@@ -266,23 +294,11 @@ TP.panel.Home = function(config) {
                     ,preventRender: true
                 }]
             },{
-                title: _('themepackagercomponent.directories')
-                ,id: 'tpc-tab-directories'
-                ,disabled: true
-                ,defaults: { border: false ,autoHeight: true }
-                ,items: [{
-                    html: _('themepackagercomponent.directories.intro_msg')
-                },{
-                    xtype: 'tp-grid-directories'
-                    ,id: 'tp-grid-directories'
-                    ,preventRender: true
-                }]
-            },{
                 title: _('themepackagercomponent.resources')
                 ,id: 'tpc-tab-resources'
                 ,layout: 'form'
                 ,labelWidth: 200
-                ,disabled: true
+                ,disabled: false
                 ,defaults: { border: false ,autoHeight: true }
                 ,items: [{
                     html: _('themepackagercomponent.resources.intro_msg')
@@ -300,6 +316,82 @@ TP.panel.Home = function(config) {
                     ,regexText: _('themepackagercomponent.resources_field_invalid')
                     ,msgTarget: 'under'
                 }]
+            },{
+                title: _('themepackagercomponent.snippets')
+                ,id: 'tpc-tab-snippets'
+                ,disabled: false
+                ,defaults: { border: false ,autoHeight: true }
+                ,items: [
+                    {
+                        html: _('themepackagercomponent.snippets.intro_msg')
+                    },{
+                        xtype: 'hidden'
+                        ,id: 'tp-tree-snippets-selected_ids'
+                        ,name: 'tp_snippet_ids'
+                        ,value: ''
+                    }
+                    ,{
+                        xtype: 'tp-tree-snippets'
+                        ,id: 'tp-tree-snippets-panel'
+                        ,listeners: {
+                            checkchange: function(el,checked) {
+                                if (el.childNodes.length > 0) {
+                                    for (var child in el.childNodes) {
+                                        if (!isNaN(child)) {
+                                            el.childNodes[child].ui.checkbox.checked = checked
+                                            el.childNodes[child].attributes.checked = checked
+                                        }
+                                    }
+                                }
+                                this.updateSelected();
+                            }
+                        }
+                    }
+                ]
+            },{
+                title: _('themepackagercomponent.plugins')
+                ,id: 'tpc-tab-plugins'
+                ,disabled: false
+                ,defaults: { border: false ,autoHeight: true }
+                ,items: [
+                    {
+                        html: _('themepackagercomponent.plugins.intro_msg')
+                    },{
+                        xtype: 'hidden'
+                        ,id: 'tp-tree-plugins-selected_ids'
+                        ,name: 'tp_plugin_ids'
+                        ,value: ''
+                    }
+                    ,{
+                        xtype: 'tp-tree-plugins'
+                        ,id: 'tp-tree-plugins-panel'
+                        ,listeners: {
+                            checkchange: function(el,checked) {
+                                if (el.childNodes.length > 0) {
+                                    for (var child in el.childNodes) {
+                                        if (!isNaN(child)) {
+                                            el.childNodes[child].ui.checkbox.checked = checked
+                                            el.childNodes[child].attributes.checked = checked
+                                        }
+                                    }
+                                }
+                                this.updateSelected();
+                            }
+                        }
+                    }
+                ]
+            },{
+                title: _('themepackagercomponent.directories')
+                ,id: 'tpc-tab-directories'
+                ,disabled: false
+                ,defaults: { border: false ,autoHeight: true }
+                ,items: [fs, {
+                    html: _('themepackagercomponent.directories.intro_msg')
+                },{
+                    xtype: 'tp-grid-directories'
+                    ,id: 'tp-grid-directories'
+                    ,preventRender: true
+                }]
             }]
         }]
         ,listeners: {
@@ -314,6 +406,8 @@ Ext.extend(TP.panel.Home,MODx.FormPanel,{
         Ext.apply(o.form.baseParams,{
             templates: Ext.getCmp('tp-tree-templates-selected_ids').getValue()
             ,chunks: Ext.getCmp('tp-tree-chunks-selected_ids').getValue()
+            ,plugins: Ext.getCmp('tp-tree-plugins-selected_ids').getValue()
+            ,snippets: Ext.getCmp('tp-tree-snippets-selected_ids').getValue()
             ,packages: Ext.getCmp('tp-grid-packages').encode()
             ,directories: Ext.getCmp('tp-grid-directories').encode()
         });
