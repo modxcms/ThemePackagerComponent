@@ -8,6 +8,9 @@ TP.panel.Home = function(config) {
         items.push({
             border: false
             ,html: '<p>Pick any files from your site root that you wish to be included in your Theme.</p>'
+            ,style: {
+                padding: '8px'
+            }
         });
         Ext.each(TP.config.rootFiles, function(f){
             items.push({
@@ -16,10 +19,12 @@ TP.panel.Home = function(config) {
                 ,name: 'rootFiles[]'
                 ,boxLabel: f
                 ,inputValue: f
+                ,hideLabel: true
+                ,style: {marginLeft: '17px'}
             });
         });
         fs = {
-            xtype: 'fieldset'
+            title: 'Files'
             ,items: items
         }
     }
@@ -32,7 +37,12 @@ TP.panel.Home = function(config) {
         }
         ,border: false
         ,baseCls: 'modx-formpanel'
+        ,cls: 'container'
         ,fileUpload: true
+        ,listeners: {
+            'beforeSubmit': {fn:this.beforeSubmit,scope:this}
+            ,'success': {fn:this.success,scope:this}
+        }
         ,items: [{
             html: '<h2>'+_('themepackagercomponent')+'</h2>'
             ,border: false
@@ -43,15 +53,18 @@ TP.panel.Home = function(config) {
             ,border: true
             ,autoDestroy: false
             ,deferredRender: false
-            ,defaults: { border: false ,autoHeight: true, bodyStyle: 'padding: 15px;' }
+            ,defaults: { border: false ,autoHeight: true, bodyStyle: 'padding: 17px;',labelWidth:200 }
             ,items: [{
                 title: _('themepackagercomponent.package')
                 ,draggable: false
                 ,layout: 'form'
-                ,labelWidth: 200
+                ,defaults: {border:false,autoHeight:true,bodyStyle:'padding:8px;'}
                 ,items: [{
                     html: _('themepackagercomponent.intro_msg')
                     ,border: false
+                    ,style: {
+                        paddingBottom: '9px'
+                    }
                 },{
                     xtype: 'textfield'
                     ,fieldLabel: _('themepackagercomponent.package_name')
@@ -72,160 +85,181 @@ TP.panel.Home = function(config) {
                     ,description: _('themepackagercomponent.release_desc')
                     ,value: 'beta1'
                 },{
-                    xtype: 'checkbox'
-                    ,id: 'tpc-package-everything-checkbox'
-                    ,name: 'everything'
-                    ,fieldLabel: _('themepackagercomponent.everything')
-                    ,description: _('themepackagercomponent.everything_desc')
-                    ,inputValue: 'yes'
-                    ,checked: false
-                    ,listeners: {
-                        check: {
-                            fn: function (el, checked) {
-                                if (checked) {
-                                    Ext.getCmp('tpc-tab-templates').disable();
-                                    Ext.getCmp('tpc-tab-chunks').disable();
-                                    Ext.getCmp('tpc-tab-subpackages').disable();
-                                    Ext.getCmp('tpc-tab-directories').disable();
-                                    Ext.getCmp('tpc-tab-resources').disable();
-                                    //Ext.getCmp('tpc-enduser-option-samplecontent').setValue(true).disable();
-                                } else {
-                                    Ext.getCmp('tpc-tab-templates').enable();
-                                    Ext.getCmp('tpc-tab-chunks').enable();
-                                    Ext.getCmp('tpc-tab-subpackages').enable();
-                                    Ext.getCmp('tpc-tab-directories').enable();
-                                    Ext.getCmp('tpc-tab-resources').enable();
-                                    //Ext.getCmp('tpc-enduser-option-samplecontent').enable();
-                                }
-                            }
-                            ,scope: this
-                        }
+                    xtype: 'checkboxgroup'
+                    ,fieldLabel: 'Package All'
+                    ,defaults: {
+                        xtype: 'checkbox'
+                        ,inputValue: 'yes'
+                        ,checked: false
                     }
-                },{
-                    xtype: 'fieldset'
-                    ,id: 'tpc-fieldset-install-options'
-                    ,title: _('themepackagercomponent.install_options_title')
-                    ,autoHeight: true
-                    ,columnWidth: 0.5
-                    ,collapsed: false
-                    ,defaults: { border: false ,autoHeight: true }
                     ,items: [
                         {
-                            html: _('themepackagercomponent.enduser_option_desc')
-                        },{
-                            xtype: 'checkbox'
-                            ,id: 'tpc-enduser_option_merge-checkbox'
-                            ,name: 'enduser_option_merge'
-                            ,fieldLabel: _('themepackagercomponent.enduser_option_merge_label')
-                            ,description: _('themepackagercomponent.enduser_option_merge_desc')
-                            ,checked: true
+                            id: 'tpc-package-everything-checkbox'
+                            ,name: 'everything'
+                            ,boxLabel: _('themepackagercomponent.all_elements')
+                            ,description: _('themepackagercomponent.all_elements_desc')
                             ,inputValue: 'yes'
-//                            ,listeners: {
-//                                check: {
-//                                    fn: function (el, checked) {
-//                                        if (checked) {
-//                                            Ext.getCmp('tpc-default-merge-option-picker').hide();
-//                                            Ext.getCmp('tpc-default-merge-option-picker-merge').hide();
-//                                            Ext.getCmp('tpc-default-merge-option-picker-replace').hide();
-//                                        } else {
-//                                            Ext.getCmp('tpc-default-merge-option-picker').show();
-//                                            Ext.getCmp('tpc-default-merge-option-picker-merge').show();
-//                                            Ext.getCmp('tpc-default-merge-option-picker-replace').show();
-//                                        }
-//                                    }
-//                                    ,scope: this
-//                                }
-//                            }
-                        },{
-                            xtype: 'radiogroup'
-                            ,id: 'tpc-default-merge-option-picker'
-                            ,fieldLabel: 'Default install action'
-                            ,hidden: false
-                            ,description: 'Specify whether your Theme package will Merge with the user\'s site on install, or completely replace it.'
-                            ,width: 300
-                            ,defaults: {labelSeparator: ''}
-                            ,items: [
-                                {
-                                    xtype: 'radio'
-                                    ,id: 'tpc-default-merge-option-picker-merge'
-                                    ,name: 'enduser_install_action_default'
-                                    ,boxLabel: 'Merge'
-                                    ,inputValue: 'merge'
-                                    ,checked: true
-                                }, {
-                                    xtype: 'radio'
-                                    ,id: 'tpc-default-merge-option-picker-replace'
-                                    ,name: 'enduser_install_action_default'
-                                    ,boxLabel: 'Replace'
-                                    ,inputValue: 'replace'
+                            ,checked: false
+                            ,listeners: {
+                                check: {
+                                    fn: function (el, checked) {
+                                        if (checked) {
+                                            Ext.getCmp('tpc-tab-elements').disable();
+                                            Ext.getCmp('tpc-tab-subpackages').disable();
+                                        } else {
+                                            Ext.getCmp('tpc-tab-elements').enable();
+                                            Ext.getCmp('tpc-tab-subpackages').enable();
+                                        }
+                                    }
+                                    ,scope: this
                                 }
-                            ]
+                            }
                         },{
-                            xtype: 'checkbox'
-                            ,id: 'tpc-enduser-option-samplecontent'
-                            ,name: 'enduser_option_samplecontent'
-                            ,fieldLabel: _('themepackagercomponent.enduser_option_samplecontent_label')
-                            ,description: _('themepackagercomponent.enduser_option_samplecontent_desc')
-                            ,checked: true
+                            id: 'tpc-package-allfiles-checkbox'
+                            ,name: 'allfiles'
+                            ,boxLabel: _('themepackagercomponent.all_files')
+                            ,description: _('themepackagercomponent.all_files_desc')
                             ,inputValue: 'yes'
-                        },{
-                            xtype: 'radiogroup'
-                            ,id: 'tpc-default-samplecontent-picker'
-                            ,fieldLabel: 'Sample Content default'
-                            ,hidden: false
-                            ,description: 'Specify whether the Theme install will default to adding your sample content or not.'
-                            ,width: 300
-                            ,defaults: {labelSeparator: ''}
-                            ,items: [
-                                {
-                                    xtype: 'radio'
-                                    ,id: 'tpc-default-samplecontent-picker-yes'
-                                    ,name: 'enduser_install_samplecontent_default'
-                                    ,boxLabel: 'Yes'
-                                    ,inputValue: 'yes'
-                                    ,checked: true
-                                }, {
-                                    xtype: 'radio'
-                                    ,id: 'tpc-default-samplecontent-picker-no'
-                                    ,name: 'enduser_install_samplecontent_default'
-                                    ,boxLabel: 'No'
-                                    ,inputValue: 'no'
+                            ,checked: false
+                            ,listeners: {
+                                check: {
+                                    fn: function (el, checked) {
+                                        if (checked) {
+                                            Ext.getCmp('tpc-tab-directories').disable();
+                                        } else {
+                                            Ext.getCmp('tpc-tab-directories').enable();
+                                        }
+                                    }
+                                    ,scope: this
                                 }
-                            ]
+                            }
                         }
                     ]
                 },{
-                    xtype: 'fieldset'
-                    ,id: 'tpc-fieldset-advanced'
-                    ,title: _('themepackagercomponent.advanced_title')
-                    ,autoHeight: true
-                    ,columnWidth: 0.5
-                    ,collapsible: true
-                    ,collapsed: true
-                    ,titleCollapse: true
-                    ,defaults: { border: false ,autoHeight: true }
+                    title: _('themepackagercomponent.install_options_title')
+                    ,html: _('themepackagercomponent.enduser_option_desc')
+                    ,style: {
+                        paddingTop: '17px'
+                    }
+                },{
+                    xtype:'fieldset'
+                    ,defaults:{border:false,autoHeight:true}
                     ,items: [
                         {
-                            xtype: 'textfield'
-                            ,id: 'tpc-advanced-settings'
-                            ,name: 'settings'
-                            ,grow: true
-                            ,growMin: 250
-                            ,growMax: 1000
-                            ,fieldLabel: _('themepackagercomponent.advanced.settings')
-                            ,description: _('themepackagercomponent.advanced.settings_desc')
+                            xtype: 'compositefield'
+                            ,defaults: {border:false,autoHeight:true}
+                            ,items: [
+                                {
+                                    xtype: 'checkbox'
+                                    ,id: 'tpc-enduser_option_merge-checkbox'
+                                    ,name: 'enduser_option_merge'
+                                    ,fieldLabel: _('themepackagercomponent.enduser_option_merge_label')
+                                    ,checked: true
+                                    ,inputValue: 'yes'
+                                },{
+                                    xtype:'fieldset'
+                                    ,border: true
+                                    ,defaults: {border:false, autoHeight:true}
+                                    ,items: [
+                                        {
+                                            xtype: 'radiogroup'
+                                            ,id: 'tpc-default-merge-option-picker'
+                                            ,hidden: false
+                                            ,fieldLabel: 'Default'
+                                            ,description: 'Specify whether your Theme package will Merge with the user\'s site on install, or completely replace it.'
+                                            ,defaults: {labelSeparator: ''}
+                                            ,width: 200
+                                            ,items: [
+                                                {
+                                                    xtype: 'radio'
+                                                    ,id: 'tpc-default-merge-option-picker-merge'
+                                                    ,name: 'enduser_install_action_default'
+                                                    ,boxLabel: 'Add'
+                                                    ,inputValue: 'merge'
+                                                    ,checked: true
+                                                }, {
+                                                    xtype: 'radio'
+                                                    ,id: 'tpc-default-merge-option-picker-replace'
+                                                    ,name: 'enduser_install_action_default'
+                                                    ,boxLabel: 'Overwrite'
+                                                    ,inputValue: 'replace'
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },{
+                            html: '<em>' + _('themepackagercomponent.enduser_option_merge_desc') + '</em>'
+                        }
+                    ]
+                }
+                ,{
+                    xtype:'fieldset'
+                    ,defaults:{border:false,autoHeight:true}
+                    ,items: [
+                        {
+                            xtype: 'compositefield'
+                            ,defaults:{border:false,autoHeight:true}
+                            ,items:[
+                                {
+                                    xtype: 'checkbox'
+                                    ,id: 'tpc-enduser-option-samplecontent'
+                                    ,name: 'enduser_option_samplecontent'
+                                    ,fieldLabel: _('themepackagercomponent.enduser_option_samplecontent_label')
+                                    ,checked: true
+                                    ,inputValue: 'yes'
+                                },{
+                                    xtype:'fieldset'
+                                    ,border: true
+                                    ,defaults: {border:false, autoHeight:true}
+                                    ,items: [
+                                        {
+                                            xtype: 'radiogroup'
+                                            ,id: 'tpc-default-samplecontent-picker'
+                                            ,hidden: false
+                                            ,fieldLabel: 'Default'
+                                            ,description: 'Specify whether the Theme install will default to adding your sample content or not.'
+                                            ,width: 200
+                                            ,defaults: {labelSeparator: ''}
+                                            ,items: [
+                                                {
+                                                    xtype: 'radio'
+                                                    ,id: 'tpc-default-samplecontent-picker-yes'
+                                                    ,name: 'enduser_install_samplecontent_default'
+                                                    ,boxLabel: 'Yes'
+                                                    ,inputValue: 'yes'
+                                                    ,checked: true
+                                                }, {
+                                                    xtype: 'radio'
+                                                    ,id: 'tpc-default-samplecontent-picker-no'
+                                                    ,name: 'enduser_install_samplecontent_default'
+                                                    ,boxLabel: 'No'
+                                                    ,inputValue: 'no'
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },{
+                            html: '<em>' + _('themepackagercomponent.enduser_option_samplecontent_desc') + '</em>'
                         }
                     ]
                 }]
             },{
-                title: _('themepackagercomponent.templates')
-                ,id: 'tpc-tab-templates'
+                title: _('themepackagercomponent.elements')
+                ,id: 'tpc-tab-elements'
                 ,disabled: false
                 ,deferredRender: false
                 ,defaults: { border: false ,autoHeight: true }
                 ,items: [
+                    // Templates
                     {
+                        title: _('themepackagercomponent.templates')
+                    },{
                         html: _('themepackagercomponent.templates.intro_msg')
+                        ,style: {margin: '10px'}
                     },{
                         xtype: 'hidden'
                         ,id: 'tp-tree-templates-selected_ids'
@@ -234,6 +268,7 @@ TP.panel.Home = function(config) {
                     },{
                         xtype: 'tp-tree-templates'
                         ,id: 'tp-tree-templates-panel'
+                        ,style: {marginLeft: '10px'}
                         ,listeners: {
                             checkchange: function(el,checked) {
                                 if (el.childNodes.length > 0) {
@@ -247,16 +282,14 @@ TP.panel.Home = function(config) {
                                 this.updateSelected();
                             }
                         }
-                    }
-                ]
-            },{
-                title: _('themepackagercomponent.chunks')
-                ,id: 'tpc-tab-chunks'
-                ,disabled: false
-                ,defaults: { border: false ,autoHeight: true }
-                ,items: [
-                    {
+                    },{html: '&nbsp;'}
+
+                    // Chunks
+                    ,{
+                        title: _('themepackagercomponent.chunks')
+                    },{
                         html: _('themepackagercomponent.chunks.intro_msg')
+                        ,style: {margin: '10px'}
                     },{
                         xtype: 'hidden'
                         ,id: 'tp-tree-chunks-selected_ids'
@@ -266,6 +299,7 @@ TP.panel.Home = function(config) {
                     ,{
                         xtype: 'tp-tree-chunks'
                         ,id: 'tp-tree-chunks-panel'
+                        ,style: {marginLeft: '10px'}
                         ,listeners: {
                             checkchange: function(el,checked) {
                                 if (el.childNodes.length > 0) {
@@ -279,7 +313,72 @@ TP.panel.Home = function(config) {
                                 this.updateSelected();
                             }
                         }
+                    },{html: '&nbsp;'}
+
+                    // Snippets
+                    ,{
+                        title: _('themepackagercomponent.snippets')
+                    },{
+                        html: _('themepackagercomponent.snippets.intro_msg')
+                        ,style: {margin: '10px'}
+                    },{
+                        xtype: 'hidden'
+                        ,id: 'tp-tree-snippets-selected_ids'
+                        ,name: 'tp_snippet_ids'
+                        ,value: ''
                     }
+                    ,{
+                        xtype: 'tp-tree-snippets'
+                        ,id: 'tp-tree-snippets-panel'
+                        ,style: {marginLeft: '10px'}
+                        ,listeners: {
+                            checkchange: function(el,checked) {
+                                if (el.childNodes.length > 0) {
+                                    for (var child in el.childNodes) {
+                                        if (!isNaN(child)) {
+                                            el.childNodes[child].ui.checkbox.checked = checked
+                                            el.childNodes[child].attributes.checked = checked
+                                        }
+                                    }
+                                }
+                                this.updateSelected();
+                            }
+                        }
+                    },{html: '&nbsp;'}
+
+                    // Plugins
+                    ,{
+                        title: _('themepackagercomponent.plugins')
+                    },{
+                        html: _('themepackagercomponent.plugins.intro_msg')
+                        ,style: {margin: '10px'}
+                    },{
+                        xtype: 'hidden'
+                        ,id: 'tp-tree-plugins-selected_ids'
+                        ,name: 'tp_plugin_ids'
+                        ,value: ''
+                    }
+                    ,{
+                        xtype: 'tp-tree-plugins'
+                        ,id: 'tp-tree-plugins-panel'
+                        ,style: {marginLeft: '10px'}
+                        ,listeners: {
+                            checkchange: function(el,checked) {
+                                if (el.childNodes.length > 0) {
+                                    for (var child in el.childNodes) {
+                                        if (!isNaN(child)) {
+                                            el.childNodes[child].ui.checkbox.checked = checked
+                                            el.childNodes[child].attributes.checked = checked
+                                        }
+                                    }
+                                }
+                                this.updateSelected();
+                            }
+                        }
+                    },{html: '&nbsp;'}
+
+
+                    // end of Elements tab
                 ]
             },{
                 title: _('themepackagercomponent.subpackages')
@@ -294,110 +393,69 @@ TP.panel.Home = function(config) {
                     ,preventRender: true
                 }]
             },{
-                title: _('themepackagercomponent.resources')
-                ,id: 'tpc-tab-resources'
-                ,layout: 'form'
-                ,labelWidth: 200
-                ,disabled: false
-                ,defaults: { border: false ,autoHeight: true }
-                ,items: [{
-                    html: _('themepackagercomponent.resources.intro_msg')
-                    ,style: {
-                        marginBottom: '20px'
-                    }
-                },{
-                    xtype: 'textfield'
-                    ,fieldLabel: _('themepackagercomponent.resources_field')
-                    ,description: _('themepackagercomponent.resources_field_desc')
-                    ,name: 'resources'
-                    ,id: 'tp-resource-list'
-                    ,value: ''
-                    ,regex: /^[0-9]+\s*(,\s*[0-9]+\s*)*$/
-                    ,regexText: _('themepackagercomponent.resources_field_invalid')
-                    ,msgTarget: 'under'
-                }]
-            },{
-                title: _('themepackagercomponent.snippets')
-                ,id: 'tpc-tab-snippets'
-                ,disabled: false
-                ,defaults: { border: false ,autoHeight: true }
-                ,items: [
-                    {
-                        html: _('themepackagercomponent.snippets.intro_msg')
-                    },{
-                        xtype: 'hidden'
-                        ,id: 'tp-tree-snippets-selected_ids'
-                        ,name: 'tp_snippet_ids'
-                        ,value: ''
-                    }
-                    ,{
-                        xtype: 'tp-tree-snippets'
-                        ,id: 'tp-tree-snippets-panel'
-                        ,listeners: {
-                            checkchange: function(el,checked) {
-                                if (el.childNodes.length > 0) {
-                                    for (var child in el.childNodes) {
-                                        if (!isNaN(child)) {
-                                            el.childNodes[child].ui.checkbox.checked = checked
-                                            el.childNodes[child].attributes.checked = checked
-                                        }
-                                    }
-                                }
-                                this.updateSelected();
-                            }
-                        }
-                    }
-                ]
-            },{
-                title: _('themepackagercomponent.plugins')
-                ,id: 'tpc-tab-plugins'
-                ,disabled: false
-                ,defaults: { border: false ,autoHeight: true }
-                ,items: [
-                    {
-                        html: _('themepackagercomponent.plugins.intro_msg')
-                    },{
-                        xtype: 'hidden'
-                        ,id: 'tp-tree-plugins-selected_ids'
-                        ,name: 'tp_plugin_ids'
-                        ,value: ''
-                    }
-                    ,{
-                        xtype: 'tp-tree-plugins'
-                        ,id: 'tp-tree-plugins-panel'
-                        ,listeners: {
-                            checkchange: function(el,checked) {
-                                if (el.childNodes.length > 0) {
-                                    for (var child in el.childNodes) {
-                                        if (!isNaN(child)) {
-                                            el.childNodes[child].ui.checkbox.checked = checked
-                                            el.childNodes[child].attributes.checked = checked
-                                        }
-                                    }
-                                }
-                                this.updateSelected();
-                            }
-                        }
-                    }
-                ]
-            },{
                 title: _('themepackagercomponent.directories')
                 ,id: 'tpc-tab-directories'
                 ,disabled: false
                 ,defaults: { border: false ,autoHeight: true }
                 ,items: [fs, {
+                    title: 'Directories'
+                    ,style: {
+                        paddingTop: '17px'
+                    }
+                },{
                     html: _('themepackagercomponent.directories.intro_msg')
+                    ,style: {
+                        padding: '8px'
+                    }
                 },{
                     xtype: 'tp-grid-directories'
                     ,id: 'tp-grid-directories'
                     ,preventRender: true
                 }]
+            },{
+                title: _('themepackagercomponent.advanced_title')
+                ,id: 'tpc-tab-advanced'
+                ,disabled: false
+                ,layout: 'form'
+                ,deferredRender: false
+                ,defaults:{border:false,autoHeight:true}
+                ,items: [
+                    {
+                        xtype: 'textfield'
+                        ,id: 'tpc-advanced-settings'
+                        ,name: 'settings'
+                        ,grow: true
+                        ,growMin: 250
+                        ,growMax: 1000
+                        ,fieldLabel: _('themepackagercomponent.advanced.settings')
+                        ,regex: /^[a-zA-Z0-9_\-]+\s*(,\s*[a-zA-Z0-9_\-]+\s*)*$/
+                        ,regexText: _('themepackagercomponent.advanced.settings_invalid')
+                        ,msgTarget: 'under'
+                    },{
+                        html: '<em>' + _('themepackagercomponent.advanced.settings_desc') + '</em>'
+                        ,style: {
+                            marginBottom: '35px'
+                            ,marginLeft: '15px'
+                        }
+                    },{
+                        xtype: 'textfield'
+                        ,fieldLabel: _('themepackagercomponent.resources_field')
+                        ,name: 'resources'
+                        ,id: 'tp-resource-list'
+                        ,value: ''
+                        ,regex: /^[0-9]+\s*(,\s*[0-9]+\s*)*$/
+                        ,regexText: _('themepackagercomponent.resources_field_invalid')
+                        ,msgTarget: 'under'
+                    },{
+                        html: '<em>' + _('themepackagercomponent.resources_field_desc') + '</em>'
+                        ,style: {
+                            marginBottom: '35px'
+                            ,marginLeft: '17px'
+                        }
+                    }
+                ]
             }]
         }]
-        ,listeners: {
-            'beforeSubmit': {fn:this.beforeSubmit,scope:this}
-            ,'success': {fn:this.success,scope:this}
-        }
     });
     TP.panel.Home.superclass.constructor.call(this,config);
 };

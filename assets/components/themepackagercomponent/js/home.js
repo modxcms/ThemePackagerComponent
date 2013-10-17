@@ -102,6 +102,7 @@ Ext.extend(TP.page.Home,MODx.Component,{
         rc = rc || false;
         Ext.getCmp('tp-panel-home').getForm().reset();
         Ext.getCmp('tpc-package-everything-checkbox').setValue(false);
+        Ext.getCmp('tpc-package-allfiles-checkbox').setValue(false);
         Ext.getCmp('tpc-enduser_option_merge-checkbox').setValue(false);
         Ext.getCmp('tpc-enduser-option-samplecontent').setValue(false);
         Ext.getCmp('tp-home-header').update('<h2>'+_('themepackagercomponent')+'</h2>');
