@@ -29,6 +29,34 @@ TP.panel.Home = function(config) {
         }
     }
 
+    // create package checkboxen
+    var ps = {};
+    if(TP.config.packages) {
+        var items = [];
+        items.push({
+            border: false
+            ,html: '<p>Pick any transport packages that you would like included in your Theme. They will be added as "subpackages" in your theme package.</p>'
+            ,style: {
+                padding: '8px'
+            }
+        });
+        Ext.each(TP.config.packages, function(p){
+            items.push({
+                xtype: 'checkbox'
+                ,id: 'subpackage-' + p.replace(' ', '_')
+                ,name: 'subpackages[]'
+                ,boxLabel: p
+                ,inputValue: p
+                ,hideLabel: true
+                ,style: {marginLeft: '17px'}
+            });
+        });
+        ps = {
+            title: 'Packages'
+            ,items: items
+        }
+    }
+
     Ext.apply(config,{
         id: 'tp-panel-home'
         ,url: TP.config.connector_url
@@ -376,11 +404,12 @@ TP.panel.Home = function(config) {
                             }
                         }
                     },{html: '&nbsp;'}
-
+                    //,ps
 
                     // end of Elements tab
                 ]
-            },{
+            }
+            ,{
                 title: _('themepackagercomponent.subpackages')
                 ,id: 'tpc-tab-subpackages'
                 ,disabled: false
@@ -392,7 +421,8 @@ TP.panel.Home = function(config) {
                     ,id: 'tp-grid-packages'
                     ,preventRender: true
                 }]
-            },{
+            }
+            ,{
                 title: _('themepackagercomponent.directories')
                 ,id: 'tpc-tab-directories'
                 ,disabled: false

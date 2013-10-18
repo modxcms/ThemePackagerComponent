@@ -32,15 +32,18 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
         $pathLookups = $this->parameters['pathLookups'];
 
         $everything = array_key_exists('everything', $this->parameters) && $this->parameters['everything'] == 'yes';
+        $allfiles = array_key_exists('allfiles', $this->parameters) && $this->parameters['allfiles'] == 'yes';
+
         $chunks = $everything ? true : $this->parameters['tp_chunk_ids'];
         $snippets = $everything ? true : $this->parameters['tp_snippet_ids'];
         $plugins = $everything ? true : $this->parameters['tp_plugin_ids'];
         $templates = $everything ? true : $this->parameters['tp_template_ids'];
         $packageList = $everything ? true : $modx->fromJSON($this->parameters['packages']);
         $resources = $everything ? true : array_map('trim', explode(',', $this->parameters['resources']));
-        $rootFilesList = $everything ? true : array_key_exists('rootFiles', $this->parameters) ? $this->parameters['rootFiles'] : false;
-        $directoryList = $everything? true : $modx->fromJSON($this->parameters['directories']);
         $settings = $everything ? true : array_map('trim', explode(',', $this->parameters['settings']));
+
+        $rootFilesList = $allfiles ? true : array_key_exists('rootFiles', $this->parameters) ? $this->parameters['rootFiles'] : false;
+        $directoryList = $allfiles ? true : $modx->fromJSON($this->parameters['directories']);
 
         define('VAPOR_DIR', $modx->tp->config['corePath']);
         define('VAPOR_VERSION', '1.2.0-dev');
@@ -224,7 +227,14 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
             }
 
             // single files in web root
+            if ($rootFilesList === true) {
+                // all web root files, from tp config
+                if (array_key_exists('rootFiles', $modx->tp->config)) {
+                    $rootFilesList = $modx->tp->config['rootFiles'];
+                }
+            }
             if (is_array($rootFilesList) && count($rootFilesList)) {
+                // user-specified web root files
                 foreach ($rootFilesList as $rootFile) {
                     if (file_exists(MODX_BASE_PATH . $rootFile)) {
                         $modx->log(modX::LOG_LEVEL_INFO, "Packaging file " . $rootFile);
@@ -241,8 +251,72 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                 }
             }
 
-            // user-specified directories
-            if (!empty($directoryList) && is_array($directoryList)) {
+            // directories
+            if ($directoryList === true) {
+                // "all" non-core directories, based on Vapor
+                $baseDirectories = array(
+                    array(
+                        'source'=> MODX_BASE_PATH,
+                        'target'=> 'return MODX_BASE_PATH;',
+                        'excludes'=> array(
+                            '_build',
+                            'setup',
+                            'assets',
+                            'ht.access',
+                            'index.php',
+                            'config.core.php',
+                            'readme.txt',
+                            'changelog.txt',
+                            'license.txt',
+                            basename(VAPOR_DIR),
+                            dirname(MODX_CORE_PATH) . '/' === MODX_BASE_PATH ? basename(MODX_CORE_PATH) : 'core',
+                            dirname(MODX_CONNECTORS_PATH) . '/' === MODX_BASE_PATH ? basename(MODX_CONNECTORS_PATH) : 'connectors',
+                            dirname(MODX_MANAGER_PATH) . '/' === MODX_BASE_PATH ? basename(MODX_MANAGER_PATH) : 'manager',
+                        )
+                    ),
+                    array(
+                        'source'=> MODX_CORE_PATH . 'components/',
+                        'target'=> 'return MODX_CORE_PATH . "components/";',
+                        'excludes'=> array('themepackagercomponent','siphon')
+                    ),
+                    array(
+                        'source'=> MODX_BASE_PATH . 'assets/',
+                        'target'=> 'return MODX_BASE_PATH . "assets/";',
+                        'excludes'=> array('components')
+                    ),
+                    array(
+                        'source'=> MODX_BASE_PATH . 'assets/components/',
+                        'target'=> 'return MODX_BASE_PATH . "assets/components/";',
+                        'excludes'=> array('themepackagercomponent','siphon')
+                    )
+                );
+                foreach ($baseDirectories as $baseDirectory) {
+                    if ($dh = opendir($baseDirectory['source'])) {
+                        $includes = array();
+                        while (($file = readdir($dh)) !== false) {
+                            /* ignore files/dirs starting with . or matching an exclude */
+                            if (strpos($file, '.') === 0 || in_array(strtolower($file), $baseDirectory['excludes'])) {
+                                continue;
+                            }
+                            $includes[] = array(
+                                'source' => $baseDirectory['source'] . $file,
+                                'target' => $baseDirectory['target']
+                            );
+                        }
+                        closedir($dh);
+                        foreach ($includes as $include) {
+                            $modx->log(modX::LOG_LEVEL_INFO, "Packaging " . $include['source']);
+                            $package->put(
+                                $include,
+                                array(
+                                    'vehicle_class' => 'xPDOFileVehicle'
+                                )
+                            );
+                        }
+                    }
+                }
+            } elseif (!empty($directoryList) && is_array($directoryList)) {
+                // user-specified directories
                 foreach ($directoryList as $directoryData) {
                     if (empty($directoryData['source']) || empty($directoryData['target'])) continue;
 
@@ -275,7 +349,6 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                     );
                 }
             }
-            // @todo handle $directoryList === true (everything)
 
             // package up the vapor model for use on install
             $modx->log(modX::LOG_LEVEL_INFO, "Packaging vaporVehicle class");
