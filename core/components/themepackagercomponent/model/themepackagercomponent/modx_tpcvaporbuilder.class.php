@@ -466,12 +466,36 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                                 'unique_key'=> 'category'
                             )
                         );
+
+                        // special case for Plugins - attach events
+                        $graph_extra = '';
+                        if ($class == 'modPlugin') {
+                            $classAttributes['related_object_attributes']['PluginEvents'] = array(
+                                'preserve_keys'=> true,
+                                'update_object'=> true,
+                                'unique_key'=> array('pluginid', 'event'),
+                                'related_objects'=> true,
+                                'related_object_attributes'=> array(
+                                    'Event'=> array(
+                                        'preserve_keys'=> true,
+                                        'update_object'=> false
+                                    ),
+                                    'PropertySet'=> array(
+                                        'preserve_keys'=> false,
+                                        'update_object'=> true,
+                                        'unique_key'=> 'name'
+                                    )
+                                )
+                            );
+                            $graph_extra = ',"PluginEvents":{"PropertySet":{}}';
+                        }
+
                         if (!$everything) {
                             $classCriteria = array($class . '.id:IN'=> explode(',', $basic_element_list));
                         }
                         $Objects = $modx->getIterator($class, $classCriteria);
                         foreach ($Objects as $object) {
-                            $object->getGraph('{"Category":{},"PropertySets":{"PropertySet":{}}}');
+                            $object->getGraph('{"Category":{},"PropertySets":{"PropertySet":{}}' . $graph_extra . '}');
                             // un-nest categories for theme package
                             if (isset($object->Category) && is_object($object->Category)) {
                                 $object->Category->set('parent', 0);
@@ -549,7 +573,9 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                     case 'modResource':
 
                         if ($everything || (is_array($resources) && count($resources))) {
-                            $classAttributes['unique_key'] = 'pagetitle';
+                            $classAttributes['preserve_keys'] = false;
+                            $classAttributes['update_object'] = true;
+                            $classAttributes['unique_key'] = array('pagetitle', 'uri');
                             $classAttributes['related_objects'] = true;
                             $classAttributes['related_object_attributes'] = array(
                                 'TemplateVarResources'=> array(
@@ -577,6 +603,12 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                                     'source' => VAPOR_DIR . 'includes/validators/validate.resource.php',
                                 ),
                             );
+                            $classAttributes['resolve'] = array(
+                                array(
+                                    'type' => 'php',
+                                    'source' => VAPOR_DIR . 'includes/resolvers/resolve.resource.php',
+                                ),
+                            );
                             if (!$everything) {
                                 $classCriteria = array(
                                     'modResource.id:IN'=> $resources
@@ -585,7 +617,16 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                             $instances = 0;
                             $Resources = $modx->getIterator('modResource', $classCriteria);
                             foreach ($Resources as $object) {
-                                $object->getGraph('{"TemplateVarResources":{"TemplateVar":{}}, "Template":{}}');
+                                $object->getGraph('{"TemplateVarResources":{"TemplateVar":{}},"Template":{}}');
+                                // create parent key for class attributes ($options in resolver)
+                                unset($classAttributes['parent_key']);
+                                $parent_key = array();
+                                if ($object->get('parent') && $Parent = $modx->getObject('modResource', array('id'=> $object->get('parent')))) {
+                                    $parent_key['context_key'] = $Parent->get('context_key');
+                                    $parent_key['alias'] = $Parent->get('alias');
+                                    $parent_key['pagetitle'] = $Parent->get('pagetitle');
+                                    $classAttributes['parent_key'] = $parent_key;
+                                }
                                 if ($package->put($object, $classAttributes)) {
                                     $instances++;
                                 } else {

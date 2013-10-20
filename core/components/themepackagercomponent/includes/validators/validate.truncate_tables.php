@@ -48,7 +48,7 @@ if ($transport && $transport->xpdo) {
             $replace = $enduser_selected_option_replace == 'replace';
 
             if ($replace && isset($fileMeta['classes'])) {
-                $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Replace indicated, truncating tables...");
+                //$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Replace indicated, truncating tables...");
                 foreach ($fileMeta['classes'] as $class) {
                     if (strpos($class, 'modUser') !== false || in_array($class, array())) {
                         continue;
@@ -56,7 +56,7 @@ if ($transport && $transport->xpdo) {
                     $results[$class] = $transport->xpdo->exec('TRUNCATE TABLE ' . $transport->xpdo->getTableName($class));
                 }
             }
-            $transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Finished truncating tables.");
+            //$transport->xpdo->log(xPDO::LOG_LEVEL_INFO, "[truncate] Finished truncating tables.");
 
             break;
     }

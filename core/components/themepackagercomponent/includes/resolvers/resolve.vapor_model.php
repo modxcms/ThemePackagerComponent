@@ -23,6 +23,5 @@
  * @var array $object
  * @var array $fileMeta
  */
-$transport->xpdo->log(XPDO::LOG_LEVEL_INFO, '[vapor model resolver]');
 $transport->xpdo->loadClass('vapor.vaporVehicle', MODX_CORE_PATH . 'components/vapor/model/', true, true);
 return true;
