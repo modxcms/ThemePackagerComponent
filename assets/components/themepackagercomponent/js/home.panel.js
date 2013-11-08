@@ -458,7 +458,7 @@ TP.panel.Home = function(config) {
                         ,growMin: 250
                         ,growMax: 1000
                         ,fieldLabel: _('themepackagercomponent.advanced.settings')
-                        ,regex: /^[a-zA-Z0-9_\-]+\s*(,\s*[a-zA-Z0-9_\-]+\s*)*$/
+                        ,regex: /^[a-zA-Z0-9_\s\.\-]+\s*(,\s*[a-zA-Z0-9_\s\.\-]+\s*)*$/
                         ,regexText: _('themepackagercomponent.advanced.settings_invalid')
                         ,msgTarget: 'under'
                     },{
