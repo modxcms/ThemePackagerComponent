@@ -35,10 +35,14 @@ if (!empty($_REQUEST['download'])) {
     $d = $modx->getOption('core_path').'packages/'.$_REQUEST['download'];
     $f = $d.'.transport.zip';
 
-    if (!is_file($f)) return '';
+    if (!is_file($f)) {
+        //$modx->log(xPDO::LOG_LEVEL_ERROR, "No file to download at $f");
+        return '';
+    }
 
     $o = file_get_contents($f);
     $bn = basename($file);
+    //$modx->log(xPDO::LOG_LEVEL_ERROR, "File found: $f .. size: " . strlen($f));
 
     header("Content-Type: application/force-download");
     header("Content-Disposition: attachment; filename=\"{$bn}.transport.zip\"");

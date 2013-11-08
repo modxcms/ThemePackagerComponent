@@ -625,6 +625,9 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                                     $parent_key['context_key'] = $Parent->get('context_key');
                                     $parent_key['alias'] = $Parent->get('alias');
                                     $parent_key['pagetitle'] = $Parent->get('pagetitle');
+                                    if ($modx->config['friendly_urls']) {
+                                        $parent_key['uri'] = $Parent->get('uri');
+                                    }
                                     $classAttributes['parent_key'] = $parent_key;
                                 }
                                 if ($package->put($object, $classAttributes)) {
