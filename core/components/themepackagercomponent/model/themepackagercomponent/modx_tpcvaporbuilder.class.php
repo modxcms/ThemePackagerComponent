@@ -127,6 +127,7 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
 
             /* Defines the classes to extract */
             $classes= array (
+                'transport.modTransportPackage',
                 'modAccessAction',
                 'modAccessActionDom',
                 'modAccessCategory',
@@ -187,7 +188,6 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                 'registry.db.modDbRegisterTopic',
                 'registry.db.modDbRegisterQueue',
                 'transport.modTransportProvider',
-                'transport.modTransportPackage',
             );
             if (version_compare($modxVersion, '2.2.0', '>=')) {
                 array_push(
@@ -663,13 +663,63 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                             continue 2;
                         }
                         break;
-                    //case 'modMenu':
-                    //    if ($everything) {
-                    //        $classCriteria = array('text:!='=> 'themepackagercomponent');
-                    //    } else {
-                    //        continue 2;
-                    //    }
-                    //    break;
+
+                    case 'modFormCustomizationProfile':
+                        $FCP = $modx->getIterator('modFormCustomizationProfile');
+                        $profileCount = 0;
+                        if ($FCP) {
+                            foreach ($FCP as $object) {
+                                //$object->getGraph('{"Sets":{"Action":{},"Template":{},"Rules":{"Action":{}}},"UserGroups":{"UserGroup"}}');
+                                $object->getGraph('{"Sets":{"Action":{},"Template":{},"Rules":{"Action":{}}}}');
+                                $classAttributes = array(
+                                    'preserve_keys'=> false,
+                                    "update_object"=> true,
+                                    "unique_key"=> "name",
+                                    "related_objects"=> true,
+                                    "related_object_attributes"=> array(
+                                        "Sets"=> array(
+                                            "preserve_keys"=> false,
+                                            "update_object"=> true,
+                                            "unique_key"=> array("profile", "action", "template", "constraint", "constraint_field", "constraint_class"),
+                                            "related_objects"=> true,
+                                            "related_object_attributes"=> array(
+                                                "Action"=> array(
+                                                    "preserve_keys"=> false,
+                                                    "update_object"=> true,
+                                                    "unique_key"=> array("namespace", "controller")
+                                                )
+                                            )
+                                        )
+                                        ,"Template"=> array(
+                                            "preserve_keys"=> false,
+                                            "update_object"=> true,
+                                            "unique_key"=> "templatename"
+                                        )
+                                        ,"Rules"=> array(
+                                            "preserve_keys"=> false,
+                                            "update_object"=> true,
+                                            "unique_key"=> array("set", "action", "name"),
+                                            "related_objects"=> true,
+                                            "related_object_attributes"=> array(
+                                                "Action"=> array(
+                                                    "preserve_keys"=> false,
+                                                    "update_object"=> true,
+                                                    "unique_key"=> array("namespace", "controller")
+                                                )
+                                            )
+                                        )
+                                    )
+                                );
+                                if ($package->put($object, $classAttributes)) {
+                                    $profileCount++;
+                                } else {
+                                    $modx->log(modX::LOG_LEVEL_WARN, "Could not package {$class} instance " . print_r($object->getPrimaryKey()));
+                                }
+                            }
+                        }
+                        $modx->log(modX::LOG_LEVEL_INFO, "Packaged {$profileCount} of {$class}");
+                        continue 2;
+
                     case 'transport.modTransportPackage':
                         $modx->loadClass($class);
                         if (!empty($packageList)) {
