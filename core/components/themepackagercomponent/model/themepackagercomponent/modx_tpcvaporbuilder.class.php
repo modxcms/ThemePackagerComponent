@@ -489,7 +489,15 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                             );
                             $graph_extra = ',"PluginEvents":{"PropertySet":{}}';
                         }
-
+                        // special resolver for Chunks
+                        if ($class == 'modChunk') {
+                            $classAttributes['resolve'] = array(
+                                array(
+                                    'type' => 'php',
+                                    'source' => VAPOR_DIR . 'includes/resolvers/resolve.chunk.php',
+                                ),
+                            );
+                        }
                         if (!$everything) {
                             $classCriteria = array($class . '.id:IN'=> explode(',', $basic_element_list));
                         }
@@ -547,6 +555,12 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                                     )
                                 )
                             )
+                        );
+                        $classAttributes['resolve'] = array(
+                            array(
+                                'type' => 'php',
+                                'source' => VAPOR_DIR . 'includes/resolvers/resolve.template.php',
+                            ),
                         );
                         if (!$everything) {
                             $classCriteria = array(
@@ -921,7 +935,9 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                 }
             }
 
-            // add script resolver to make sure we leave at least 1 resource in the tree
+            // add script resolver to do some cleanup activities
+            // - make sure we leave at least 1 resource in the tree
+            // - handle "portable id" resolution
             $package->put(
                 array(
                     'source'=> VAPOR_DIR . 'includes/scripts/cleanup.php'
@@ -966,15 +982,15 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                 $returnMessage .= "{$message}\n";
             }
             $endTime = microtime(true);
-            $modx->log(modX::LOG_LEVEL_INFO, sprintf("Vapor execution completed without exception in %2.4fs", $endTime - $startTime));
+            $modx->log(modX::LOG_LEVEL_INFO, sprintf("Packager execution completed without exception in %2.4fs", $endTime - $startTime));
 
-            $returnMessage = sprintf("Vapor execution completed without exception in %2.4fs\n", $endTime - $startTime);
+            $returnMessage = sprintf("Packager execution completed without exception in %2.4fs\n", $endTime - $startTime);
 
             $signature = $package->signature;
             $return = $modx->error->success($signature);
 
         } catch (Exception $e) {
-            $modx->log(modX::LOG_LEVEL_INFO, sprintf("TPC execution completed with exception in %2.4fs", $endTime - $startTime) . "\n" . $e->getMessage() );
+            $modx->log(modX::LOG_LEVEL_INFO, sprintf("Packager execution completed with exception in %2.4fs", $endTime - $startTime) . "\n" . $e->getMessage() );
             $returnMessage .= $e->getMessage() . "\n";
             $return = $modx->error->failure($returnMessage);
         }

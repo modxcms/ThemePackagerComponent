@@ -38,7 +38,7 @@ set_time_limit(0);
 define('PKG_NAME','themepackagercomponent');
 define('PKG_NAME_LOWER','themepackagercomponent');
 define('PKG_VERSION','1.2.1');
-define('PKG_RELEASE','beta6');
+define('PKG_RELEASE','beta12');
 
 /* set sources */
 $root = dirname(dirname(__FILE__)).'/';
@@ -49,6 +49,7 @@ $sources= array (
     'data' => $root . '_build/data/',
     'lexicon' => $root . 'core/components/themepackagercomponent/lexicon/',
     'source_core' => $root.'core/components/themepackagercomponent',
+    'includes'=> $root.'core/components/themepackagercomponent/includes',
     'source_assets' => $root.'assets/components/themepackagercomponent',
     'docs' => $root.'core/components/themepackagercomponent/docs/',
 );
@@ -97,6 +98,29 @@ $vehicle->resolve('php',array(
 ));
 $builder->putVehicle($vehicle);
 unset($vehicle,$action);
+
+
+// add p_id snippet
+$snippet_content = file_get_contents($sources['includes'].'/snippets/p_id.snippet.php');
+$snippet_content = str_replace('<?php','',$snippet_content);
+$snippet_content = str_replace('?>','',$snippet_content);
+$snippet_content = trim($snippet_content);
+
+/** @var xPDOObject $snippet_p_id */
+$snippet_p_id= $modx->newObject('modSnippet');
+$snippet_p_id->fromArray(array(
+    'id' => 1,
+    'name' => 'p_id',
+    'description' => 'Portable ids - returns the passed identifier, and acts as a placeholder for a packaging script, whose purpose is to replace this snippet with another placeholder which will be resolved to the correct identifier on a target instance',
+    'snippet' => $snippet_content,
+),'',true,true);
+unset($properties);
+$vehicle = $builder->createVehicle($snippet_p_id, array(
+    xPDOTransport::UNIQUE_KEY => 'name',
+    xPDOTransport::PRESERVE_KEYS => false,
+    xPDOTransport::UPDATE_OBJECT => true,
+));
+$builder->putVehicle($vehicle);
 
 /* now pack in the license file, readme and setup options */
 $builder->setPackageAttributes(array(
