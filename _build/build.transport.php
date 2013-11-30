@@ -38,7 +38,7 @@ set_time_limit(0);
 define('PKG_NAME','themepackagercomponent');
 define('PKG_NAME_LOWER','themepackagercomponent');
 define('PKG_VERSION','1.2.1');
-define('PKG_RELEASE','beta12');
+define('PKG_RELEASE','beta13');
 
 /* set sources */
 $root = dirname(dirname(__FILE__)).'/';

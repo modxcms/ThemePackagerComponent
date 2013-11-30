@@ -589,7 +589,6 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         if ($everything || (is_array($resources) && count($resources))) {
                             $classAttributes['preserve_keys'] = false;
                             $classAttributes['update_object'] = true;
-                            $classAttributes['unique_key'] = array('pagetitle', 'uri');
                             $classAttributes['related_objects'] = true;
                             $classAttributes['related_object_attributes'] = array(
                                 'TemplateVarResources'=> array(
