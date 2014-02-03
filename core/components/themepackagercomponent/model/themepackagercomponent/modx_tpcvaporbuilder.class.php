@@ -584,6 +584,46 @@ class Modx_tpcVaporBuilder implements Modx_Package_Builder {
                         }
                         continue 2;
 
+                    case 'modTemplateVar':
+                        $classAttributes['unique_key'] = 'name';
+                        $classAttributes['related_objects'] = true;
+                        $classAttributes['related_object_attributes'] = array(
+                            'Category'=> array(
+                                'preserve_keys'=> false,
+                                'update_object'=> true,
+                                'unique_key'=> 'category'
+                            )
+                        );
+
+                        $c = $modx->newQuery($class);
+                        $c->where(array(
+                            "NOT EXISTS (SELECT 1 FROM {$modx->getTableName('modTemplateVarTemplate')} tt WHERE tt.tmplvarid = modTemplateVar.id)"
+                        ));
+
+                        $tvs = $modx->getIterator($class, $c);
+
+                        /** @var modTemplateVar $tv */
+                        foreach ($tvs as $tv) {
+                            $c = $modx->newQuery('modTemplateVarTemplate');
+                            $c->leftJoin('modTemplateVar', 'TemplateVar');
+                            $c->where(array(
+                                'TemplateVar.input_properties:LIKE' => '%inputTV":"' . $tv->name . '"%'
+                            ));
+
+                            $cnt = $modx->getCount('modTemplateVarTemplate', $c);
+
+                            if ($cnt > 0) {
+                                $tv->getGraph('{"Category":{}}');
+
+                                if ($package->put($tv, $classAttributes)) {
+                                    $instances++;
+                                } else {
+                                    $modx->log(modX::LOG_LEVEL_WARN, "Could not package {$class} instance with pk: " . print_r($tv->getPrimaryKey()));
+                                }
+                            }
+                        }
+                        continue 2;
+
                     case 'modResource':
 
                         if ($everything || (is_array($resources) && count($resources))) {
