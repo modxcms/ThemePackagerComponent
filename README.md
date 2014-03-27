@@ -25,6 +25,10 @@ To install the package in another site, upload it to the {core_path}packages/ di
 
 Learn more about TPC in the [Official Documentation](http://rtfm.modx.com/extras/revo/themepackagercomponent).
 
+## Contribution
+
+Help make TPC better by reporting [issues](https://github.com/modxcms/ThemePackagerComponent/issues) and submitting [solutions](https://github.com/modxcms/ThemePackagerComponent/pulls)
+
 ## Credits
 
 TPC is truly a team effort. Thanks to @opengeek for the Vapor technology, @netprophet for the integration with the legacy [Packman](http://modx.com/extras/package/packman) UI, and @theboxer for ongoing maintenance, integration and improvements, as well as all the beta testers and contributors.
