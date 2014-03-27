@@ -1,5 +1,9 @@
 Changelog for ThemePackagerComponent
 
+ThemePackagerComponent 1.3.0-dev1
+====================================
+- initial release into Extras repo
+
 ThemePackagerComponent 1.0.0
 ====================================
 - fork from PackMan
