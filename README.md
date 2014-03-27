@@ -1,9 +1,9 @@
 # ThemePackagerComponent
 
-ThemePackagerComponent (TPC) is a tool to build installable packages from elements within a MODX site. Possible uses include:
+ThemePackagerComponent (TPC) is a tool to build installable packages from objects and files within a MODX site. Possible uses include:
 * Packaging a theme
 * Packaging a new component or Extra
-* Migrating specific elements from one site/environment to another
+* Migrating specific objects from one site/environment to another
 
 ## Installation
 
