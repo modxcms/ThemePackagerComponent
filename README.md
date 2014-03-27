@@ -9,6 +9,12 @@ ThemePackagerComponent (TPC) is a tool to build installable packages from object
 
 You can install TPC via the Package Manager in any MODX Revolution site, or download the latest package from: http://modx.com/extras/package/themepackagercomponent/
 
+## Important!
+
+TPC is in beta. This means it's not bug-free. In fact there are known issues with uninstalling some packages made with TPC. While TPC works very well for a narrow set of tested use cases, there are a potentially unlimited number of use cases in which it has not been tested at all, and in some cases may break your site, or the site in which the resulting package is installed into. 
+
+For mission-critical applications, and for those with the know-how, it's recommended to manually author build scripts.
+
 ## Basic Usage
 
 After installation, in the main menu of the Manager go to "Components" -> "ThemePackagerComponent". Specify a Name, Version and Release for your package, select the two checkboxes for "Package All..." and click the "Export Transport Package" button in the top right corner of the screen. You will be prompted to download the resulting package, which will contain all Resources, Elements, Sub-packages and contents of the assets/ folder in the current MODX site.
