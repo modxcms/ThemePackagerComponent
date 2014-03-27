@@ -11,7 +11,7 @@ You can install TPC via the Package Manager in any MODX Revolution site, or down
 
 ## Important!
 
-TPC is in beta. This means it's not bug-free. In fact there are known issues with uninstalling some packages made with TPC. While TPC works very well for a narrow set of tested use cases, there are a potentially unlimited number of use cases in which it has not been tested at all, and in some cases may break your site, or the site in which the resulting package is installed into. 
+TPC is a -dev release. This means it's still in development and not bug-free. In fact there are known issues with uninstalling some packages made with TPC. While TPC works very well for a narrow set of tested use cases, there are a potentially unlimited number of use cases in which it has not been tested at all, and in some cases may break your site, or the site in which the resulting package is installed into. 
 
 For mission-critical applications, and for those with the know-how, it's recommended to manually author build scripts.
 
